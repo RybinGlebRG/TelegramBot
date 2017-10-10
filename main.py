@@ -1,7 +1,7 @@
 import time
 import telepot.telepot as tp
 from telepot.telepot.loop import MessageLoop
-#Fake token, change to valid token
+#Fake token, change to valid one
 bot = tp.Bot('463574165:AAFlC-rq_t5gfvokF9s5-TZOFDT-JLXAktA')
 
 import ai
@@ -13,7 +13,6 @@ def handle(msg):
 
     if content_type == 'text':
         answer=AI.answer(msg['text'])
-        #answer="lol"
         bot.sendMessage(chat_id, answer)
 
 MessageLoop(bot,handle).run_as_thread()
