@@ -1,7 +1,7 @@
 import time
 import telepot.telepot as tp
 from telepot.telepot.loop import MessageLoop
-#Fake token, change valid token
+#Fake token, change to valid token
 bot = tp.Bot('463574165:AAFlC-rq_t5gfvokF9s5-TZOFDT-JLXAktA')
 
 import ai
