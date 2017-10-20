@@ -1,40 +1,54 @@
-import sqlite3
-
+import psycopg2
 
 class AI():
-    used_words=""
-    def __init__(self):
-        str="А"
-        conn=sqlite3.connect('Words.db')
-        cursor=conn.cursor()
-        cursor.execute("select * from words")
-        res=cursor.fetchall()
-        print(res)
-        conn.close()
+    conn = psycopg2.connect(
+        database="WORDS",
+        user="postgres",
+        password="postgres",
+        host="localhost",
+        port="5432"
+    )
 
+    def __init__(self):
+        cursor=self.conn.cursor()
+        cursor.execute("delete from used")
+        self.conn.commit()
+
+
+
+    def getUsedWords(self):
+        used = ""
+        cursor = self.conn.cursor()
+        cursor.execute("select word from used")
+        while (1):
+            res = cursor.fetchone()
+            if (res == None):
+                break
+            else:
+                used += res[0] + ", "
+        return used[:-2]
+
+
+    def addUsedWord(self,wrd):
+        cursor = self.conn.cursor()
+        cursor.execute("insert into used(word) values('" + wrd + "')")
+        self.conn.commit()
 
     def answer(self, str):
-        #Add Handler!!!!!!!!!!!!!!!!!!!
-       try:
-            conn = sqlite3.connect('Words.db')
-            cursor = conn.cursor()
+            answer=""
 
-            print(AI.used_words)
-            cursor.execute("select max(word) from words where f_char='"+str[0].upper()+"' and word not in ('"+AI.used_words+"')")
-            res = cursor.fetchall()
-            conn.close()
-            print(res)
-            if (res[0][0]==None):
+            cursor = self.conn.cursor()
+            cursor.execute("select max(color) from colors where upper(substr(color,1,1))='"+str[-1:].upper()+"' and upper(color) not in ('"+ AI.getUsedWords(self).upper()+"')")
+            res = cursor.fetchone()
+            if (res[0]==None):
                 answer="Have Losed"
             else:
-                answer=res[0][0]
-                if (len(AI.used_words) > 0):
-                    AI.used_words += "," + answer
-                else:
-                    AI.used_words += answer
-            print (answer)
+                answer=res[0]
+                AI.addUsedWord(self,answer)
             return answer
-       except sqlite3.OperationalError:
-            print("Unresolved error")
-            return "Ошибка"
 
+    def close(self):
+        self.conn.close();
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.conn.close();
