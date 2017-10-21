@@ -3,6 +3,7 @@ import psycopg2
 class AI():
     conn = psycopg2.connect(
         database="WORDS",
+        #Change to something more secure
         user="postgres",
         password="postgres",
         host="localhost",
