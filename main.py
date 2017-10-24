@@ -1,8 +1,16 @@
 import time
 import telepot.telepot as tp
 from telepot.telepot.loop import MessageLoop
+import os
+
+import socket
 #Fake token, change to valid one
 bot = tp.Bot('463574165:AAGxdaxczz_aGDqWl6Rrn3BcglageG0_Gig')
+
+sock=socket.socket()
+sock.bind(('',int(os.environ['PORT'])))
+sock.listen(1)
+
 
 import ai
 AI = ai.AI()
