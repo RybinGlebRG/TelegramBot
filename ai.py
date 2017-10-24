@@ -57,7 +57,7 @@ class AI():
         self.DB.addUsedWord(str)
         answer=self.makeDecision(str)
         if answer is None:
-            answer = "Have Losed"
+            answer = "Have lost"
             self.closeGame()
         else:
             self.DB.addUsedWord(answer)
