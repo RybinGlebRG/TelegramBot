@@ -1,63 +1,40 @@
 import psycopg2
+import dbInteraction
 
 class AI():
-    conn = psycopg2.connect(
-        database="WORDS",
-        #Change to something more secure
-        user="postgres",
-        password="postgres",
-        host="localhost",
-        port="5432"
-    )
+    DB = dbInteraction.DBInteraction()
 
     status=False
 
     def IsGameStarted(self):
-        return  self.status
+        return self.status
 
     def startGame(self):
         self.status=True
-        self.deleteUsedWords()
+        self.DB.deleteUsedWords()
 
     def closeGame(self):
         self.status=False
 
     def __init__(self):
-        self.deleteUsedWords()
-
-    def deleteUsedWords(self):
-        with self.conn.cursor() as cursor:
-            cursor.execute("delete from used")
-            self.conn.commit()
-
-    def getUsedWords(self):
-        with self.conn.cursor() as cursor:
-            cursor.execute("select word from used")
-            res=cursor.fetchall()
-            return res
+        self.DB.deleteUsedWords()
 
     def tupleToString(self,tup):
         used = ""
-        print(tup)
+        #print(tup)
         for elem in tup:
-            if (elem == None):
+            if elem is None:
                 break
             else:
-                used +="'"+ elem[0] + "', "
+                used += "'" + elem[0] + "', "
         return used[:-2]
 
     def IsUsed(self,wrd):
-        tup=self.getUsedWords()
+        tup=self.DB.getUsedWords()
         for elem in tup:
             if elem[0]==wrd:
                 return True
         return False
-
-
-    def addUsedWord(self,wrd):
-        with self.conn.cursor() as cursor:
-            cursor.execute("insert into used(word) values('" + wrd + "')")
-            self.conn.commit()
 
     def answer(self, str):
         if (str=="/startGame"):
@@ -77,23 +54,22 @@ class AI():
         if self.IsUsed(str):
             answer = "That word have already been used"
             return answer
-        res = []
-        self.addUsedWord(str)
-        cursor = self.conn.cursor()
-        used = self.tupleToString(self.getUsedWords()).upper()
-        with self.conn.cursor() as cursor:
-            cursor.execute("select max(color) from colors where upper(substr(color,1,1))='" + str[-1:].upper() + "' and upper(color) not in (" + used + ")")
-            res = cursor.fetchone()
-        if (res[0] == None):
+        self.DB.addUsedWord(str)
+        answer=self.makeDecision(str)
+        if answer is None:
             answer = "Have Losed"
             self.closeGame()
         else:
-            answer = res[0]
-            self.addUsedWord(answer)
+            self.DB.addUsedWord(answer)
         return answer
 
-    def close(self):
-        self.conn.close();
+    def makeDecision(self,str):
+        used = self.tupleToString(self.DB.getUsedWords()).upper()
+        res=self.DB.query("select max(color) from colors where upper(substr(color,1,1))='" + str[-1:].upper() + "' and upper(color) not in (" + used + ")")
+        if res[0][0] is None:
+            return None
+        else:
+            return res[0][0]
 
     def __exit__(self, exception_type, exception_value, traceback):
-        self.close()
+        pass
