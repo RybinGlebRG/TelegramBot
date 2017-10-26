@@ -2,39 +2,22 @@
 import telepot.telepot as tp
 #from telepot.telepot.loop import MessageLoop
 import os
-
-import socket
-
+import botAuthorization as ba
 from flask import Flask, request
 from telepot.telepot.loop import OrderedWebhook
 
 #Fake token, change to valid one
-TOKEN='463574165:AAEqgwRAsHT9rv484DlCJ7BbXlVNN79LNf8'
+TOKEN=ba.getToken()
 bot = tp.Bot(TOKEN)
 
 PORT=os.environ['PORT']
-#PORT=80
-print(os.environ['PORT'])
-#sock=socket.socket()
-#sock.bind(('',int(os.environ['PORT'])))
-#sock.listen(1)
-
-
-
 import ai
 AI = ai.AI()
 
-def on_chat_message(msg):
-    content_type, chat_type, chat_id = tp.glance(msg)
-    print('Chat Message:', content_type, chat_type, chat_id)
-
 def handle(msg):
     content_type, chat_type, chat_id = tp.glance(msg)
-    #print(content_type, chat_type, chat_id)
-    #bot.sendMessage(chat_id,"LOL")
     if content_type == 'text':
         answer=AI.answer(msg['text'])
-        #answer=msg['text']
         bot.sendMessage(chat_id, answer)
 
 app = Flask(__name__)
@@ -43,8 +26,6 @@ webhook = OrderedWebhook(bot, {'chat': handle})
 
 @app.route('/bot'+TOKEN, methods=[ 'GET','POST'])
 def pass_update():
-    #print("Data:")
-    #print(request.data)
     webhook.feed(request.data)
     return 'OK'
 
