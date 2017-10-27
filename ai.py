@@ -1,13 +1,10 @@
 import psycopg2
 import dbInteraction
-import string
 
 class AI():
     DB = dbInteraction.DBInteraction()
-    alphabet=dict.fromkeys(string.ascii_uppercase,0)
 
     status=False
-    qaunt = {}
 
     def IsGameStarted(self):
         return self.status
@@ -39,14 +36,6 @@ class AI():
                 return True
         return False
 
-    def getWordList(self,theme):
-        used = self.tupleToString(self.DB.getUsedWords()).upper()
-        res = self.DB.query("select" + theme[:-1] +"from" +theme+ "where upper(substr("+theme[:-1]+",1,1))='" + str[-1:].upper() + "' and upper("+theme[:-1]+") not in (" + used + ")")
-        if res[0][0] is None:
-            return None
-        else:
-            return res
-
     def answer(self, str):
         if (str=="/startGame"):
             self.status=True
@@ -75,30 +64,12 @@ class AI():
         return answer
 
     def makeDecision(self,str):
-        res=self.getWordList("colors")
-        return  res[0][0]
-
-
-
-    def calcAlphabetHave(self,word):
-        #Possible answers
-        have=self.DB.query("select distinct upper(color) from colors,used where color not in (select word from used) and substr(upper(color),1,1)='"+word[-1].upper()+"'")
-        max=0;
-        #Amounts of answers player can have, based on knonw words
-        for el in have:
-            res=self.DB.query("select distinct color from colors,used where upper(color) not in (select upper(word) from used) and upper(color) not in ('"+el[0].upper()+"') and substr(upper(color),1,1)='"+el[0][-1].upper()+"'")
-            #print (res)
-            if len(res)>max:
-                max=len(res)
-
-            self.qaunt[el[0]]=len(res)
-
-        print(self.qaunt)
-        #Normalize values
-        for el in have:
-            tmp=(max-self.qaunt[el[0]])/(max)
-            self.qaunt[el[0]]= tmp
-        print(self.qaunt)
+        used = self.tupleToString(self.DB.getUsedWords()).upper()
+        res=self.DB.query("select max(color) from colors where upper(substr(color,1,1))='" + str[-1:].upper() + "' and upper(color) not in (" + used + ")")
+        if res[0][0] is None:
+            return None
+        else:
+            return res[0][0]
 
     def __exit__(self, exception_type, exception_value, traceback):
         pass
