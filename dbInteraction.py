@@ -32,6 +32,7 @@ class DBInteraction():
     )
 
     def checkConnection(self):
+        #Наоборот??????????????
         if self.conn.closed!=0:
             self.cur_env=os.environ['DATABASE_URL']
             #self.cur_env=tmp;
