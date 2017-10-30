@@ -12,10 +12,10 @@ class AI():
     actions=[]
 
     status=False
-    qaunt = {}
+    #qaunt = {}
 
-    arguments=[]
-    values=[]
+    #arguments=[]
+    #values=[]
 
     def IsGameStarted(self):
         return self.status
@@ -84,6 +84,7 @@ class AI():
 
     def makeDecision(self,word):
         res=""
+        self.actions.clear()
         #Possible answers
         have=self.DB.query("select distinct upper(color) from colors,used where upper(color) not in (select upper(word) from used) and substr(upper(color),1,1)='"+word[-1].upper()+"'")
         max=0;
