@@ -1,13 +1,21 @@
 import psycopg2
 import dbInteraction
 import string
+import random
+import action
+import utility
 
 class AI():
     DB = dbInteraction.DBInteraction()
     alphabet=dict.fromkeys(string.ascii_uppercase,0)
 
+    actions=[]
+
     status=False
     qaunt = {}
+
+    arguments=[]
+    values=[]
 
     def IsGameStarted(self):
         return self.status
@@ -74,31 +82,31 @@ class AI():
             self.DB.addUsedWord(answer)
         return answer
 
-    def makeDecision(self,str):
-        res=self.getWordList("colors")
-        return  res[0][0]
-
-
-
-    def calcAlphabetHave(self,word):
+    def makeDecision(self,word):
+        res=""
         #Possible answers
-        have=self.DB.query("select distinct upper(color) from colors,used where color not in (select word from used) and substr(upper(color),1,1)='"+word[-1].upper()+"'")
+        have=self.DB.query("select distinct upper(color) from colors,used where upper(color) not in (select upper(word) from used) and substr(upper(color),1,1)='"+word[-1].upper()+"'")
         max=0;
         #Amounts of answers player can have, based on knonw words
         for el in have:
-            res=self.DB.query("select distinct color from colors,used where upper(color) not in (select upper(word) from used) and upper(color) not in ('"+el[0].upper()+"') and substr(upper(color),1,1)='"+el[0][-1].upper()+"'")
-            #print (res)
+            res=self.DB.query("select distinct upper(color) from colors,used where upper(color) not in (select upper(word) from used) and upper(color) not in ('"+el[0].upper()+"') and substr(upper(color),1,1)='"+el[0][-1].upper()+"'")
             if len(res)>max:
                 max=len(res)
+            self.actions.append(action.Action(el[0]))
+            self.actions[-1].utility=len(res)
 
-            self.qaunt[el[0]]=len(res)
-
-        print(self.qaunt)
         #Normalize values
-        for el in have:
-            tmp=(max-self.qaunt[el[0]])/(max)
-            self.qaunt[el[0]]= tmp
-        print(self.qaunt)
+        for i in range(0,len(self.actions)):
+            self.actions[i].normalize(max)
+
+        uCalc = utility.UtilityCalc()
+        uCalc.calcUtility(self.actions)
+        res=uCalc.chooseFittest(self.actions)
+        if (res==-1):
+            return None
+        return  self.actions[res].element
+
+
 
     def __exit__(self, exception_type, exception_value, traceback):
         pass
