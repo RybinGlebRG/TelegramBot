@@ -1,26 +1,29 @@
-import random
-
+import action
+import dbInteraction
 
 class UtilityCalc:
+    DB = dbInteraction.DBInteraction()
     arguments = []
+    evo=None
     values = []
+    actions = []
 
-    def __init__(self):
+    def __init__(self,evolution):
         for i in range(0, 59, 1):
             self.arguments.append(i * (1 / 60))
         self.arguments.pop()
         self.arguments.append(1)
-        for i in range(0, 59, 1):
-            self.values.append(random.random())
+        self.evo=evolution
 
-    def calcUtility(self, lst):
+    def calcUtility(self, lst,function):
         for i in range(0,len(lst)):
-            lst[i].utility=self.getUtility(lst[i].utility)
+            lst[i].utility=self.getUtility(lst[i].utility,function)
 
-    def getUtility(self,utility):
+    def getUtility(self,utility,values):
         last=0
         next=0
         cur=0
+
         for i in range(1,len(self.arguments)-1):
 
             if utility==self.arguments[i]:
@@ -46,19 +49,39 @@ class UtilityCalc:
                 break
 
         if cur!=-1:
-            return self.values[cur]
+            return values[cur]
         else:
-            lval=self.values[last]
-            nval=self.values[next]
+            lval=values[last]
+            nval=values[next]
             tmp=(utility-self.arguments[last])/(self.arguments[next]-self.arguments[last])
             tmp2=(nval-lval)*tmp
             return tmp2
 
-    def chooseFittest(self,lst):
+    def addActions(self,have):
+        max=0;
+        #Amounts of answers player can have, based on knonw words
+        for el in have:
+            res=self.DB.query("select distinct upper(color) from colors,used where upper(color) not in (select upper(word) from used) and upper(color) not in ('"+el[0].upper()+"') and substr(upper(color),1,1)='"+el[0][-1].upper()+"'")
+            if len(res)>max:
+                max=len(res)
+            self.actions.append(action.Action(el[0]))
+            self.actions[-1].utility=len(res)
+        if max!=0:
+            #Normalize values
+            for i in range(0,len(self.actions)):
+                self.actions[i].normalize(max)
+        self.calcUtility(self.actions,self.evo.getFunction())
+
+
+    def getFittest(self):
         max=0
         ind=-1
-        for i in range(0, len(lst)):
-            if lst[i].utility>=max:
-                max=lst[i].utility
+        for i in range(0, len(self.actions)):
+            if self.actions[i].utility>=max:
+                max=self.actions[i].utility
                 ind=i
-        return ind
+
+        if ind==-1:
+            return None
+        else:
+            return self.actions[ind].element

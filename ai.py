@@ -4,35 +4,29 @@ import string
 import random
 import action
 import utility
+import genMod as gm
 
 class AI():
     DB = dbInteraction.DBInteraction()
-    alphabet=dict.fromkeys(string.ascii_uppercase,0)
+    EVO=gm.Evolution()
+    UC=utility.UtilityCalc(EVO)
 
-    actions=[]
 
-    status=False
-    #qaunt = {}
-
-    #arguments=[]
-    #values=[]
-
-    def IsGameStarted(self):
-        return self.status
+    isGameStarted=False
 
     def startGame(self):
-        self.status=True
+        self.isGameStarted=True
         self.DB.deleteUsedWords()
 
-    def closeGame(self):
-        self.status=False
+    def closeGame(self,res):
+        self.isGameStarted=False
+        self.EVO.setFitness(res)
 
     def __init__(self):
         self.DB.deleteUsedWords()
 
     def tupleToString(self,tup):
         used = ""
-        #print(tup)
         for elem in tup:
             if elem is None:
                 break
@@ -43,7 +37,7 @@ class AI():
     def IsUsed(self,wrd):
         tup=self.DB.getUsedWords()
         for elem in tup:
-            if elem[0]==wrd:
+            if elem[0]==wrd.upper():
                 return True
         return False
 
@@ -57,9 +51,10 @@ class AI():
 
     def answer(self, str):
         if (str=="/startGame"):
-            self.status=True
+            #self.status=True
+            self.startGame()
             return "It's your move"
-        if self.IsGameStarted():
+        if self.isGameStarted:
             return self.gameProcess(str)
         else:
             return self.idleChat(str)
@@ -68,8 +63,6 @@ class AI():
         return "Game isn't started"
 
     def gameProcess(self,str):
-        answer = ""
-
         if self.IsUsed(str):
             answer = "That word have already been used"
             return answer
@@ -77,37 +70,18 @@ class AI():
         answer=self.makeDecision(str)
         if answer is None:
             answer = "Have lost"
-            self.closeGame()
+            self.closeGame(0)
         else:
             self.DB.addUsedWord(answer)
         return answer
 
     def makeDecision(self,word):
-        res=""
-        self.actions.clear()
+        self.UC.actions.clear()
         #Possible answers
         have=self.DB.query("select distinct upper(color) from colors,used where upper(color) not in (select upper(word) from used) and substr(upper(color),1,1)='"+word[-1].upper()+"'")
-        max=0;
-        #Amounts of answers player can have, based on knonw words
-        for el in have:
-            res=self.DB.query("select distinct upper(color) from colors,used where upper(color) not in (select upper(word) from used) and upper(color) not in ('"+el[0].upper()+"') and substr(upper(color),1,1)='"+el[0][-1].upper()+"'")
-            if len(res)>max:
-                max=len(res)
-            self.actions.append(action.Action(el[0]))
-            self.actions[-1].utility=len(res)
-
-        #Normalize values
-        for i in range(0,len(self.actions)):
-            self.actions[i].normalize(max)
-
-        uCalc = utility.UtilityCalc()
-        uCalc.calcUtility(self.actions)
-        res=uCalc.chooseFittest(self.actions)
-        if (res==-1):
-            return None
-        return  self.actions[res].element
-
-
+        self.UC.addActions(have)
+        res=self.UC.getFittest()
+        return res
 
     def __exit__(self, exception_type, exception_value, traceback):
         pass
