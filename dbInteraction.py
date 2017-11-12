@@ -1,14 +1,10 @@
 import psycopg2
 import urllib.parse as urlparse
 import os
-import state
-
-if state.local==True: tmp="postgres://postgres:postgres@127.0.0.1:5432/WORDS"
+#tmp="postgres://dwwonxduejlzym:c179f509be3eca5de4a54fdb2bd6679b5f78d7c5fdc7a96ea2ce655c0494e6a0@ec2-50-19-89-124.compute-1.amazonaws.com:5432/d5ivqg5m5qbeir"
 class DBInteraction():
-    if state.local==False:
-        cur_env = os.environ['DATABASE_URL']
-    else:
-        cur_env=tmp
+    cur_env = os.environ['DATABASE_URL']
+    #cur_env=tmp
     url = urlparse.urlparse(cur_env)
     dbname = url.path[1:]
     user = url.username
@@ -37,10 +33,8 @@ class DBInteraction():
 
     def checkConnection(self):
         if self.conn.closed!=0:
-            if state.local==False:
-                self.cur_env=os.environ['DATABASE_URL']
-            else:
-                self.cur_env=tmp;
+            self.cur_env=os.environ['DATABASE_URL']
+            #self.cur_env=tmp;
             self.url = urlparse.urlparse(self.cur_env)
             self.dbname = self.url.path[1:]
             self.user = self.url.username
@@ -65,7 +59,7 @@ class DBInteraction():
     def getUsedWords(self):
         self.checkConnection();
         with self.conn.cursor() as cursor:
-            cursor.execute("select upper(word) from used")
+            cursor.execute("select word from used")
             res=cursor.fetchall()
             return res
 
@@ -73,25 +67,6 @@ class DBInteraction():
         self.checkConnection();
         with self.conn.cursor() as cursor:
             cursor.execute("insert into used(word) values('" + wrd + "')")
-            self.conn.commit()
-
-    '''       
-    def insert(self,query):
-        self.checkConnection();
-        with self.conn.cursor() as cursor:
-            cursor.execute(query)
-            self.conn.commit()
-            
-    def delete(self,query):
-        self.checkConnection();
-        with self.conn.cursor() as cursor:
-            cursor.execute(query)
-            self.conn.commit()
-    '''
-    def DML(self,str):
-        self.checkConnection();
-        with self.conn.cursor() as cursor:
-            cursor.execute(str)
             self.conn.commit()
 
     def query(self,str):
