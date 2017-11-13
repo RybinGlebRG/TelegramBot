@@ -23,7 +23,7 @@ class UtilityCalc:
         last=0
         next=0
         cur=0
-
+        # Need to make it simpler !!!!!!!!!!!
         for i in range(1,len(self.arguments)-1):
 
             if utility==self.arguments[i]:
@@ -57,11 +57,13 @@ class UtilityCalc:
             tmp2=(nval-lval)*tmp
             return tmp2
 
-    def addActions(self,have):
+    def addActions(self,chat_id,word):
+        #Possible answers
+        have=self.DB.query("select distinct upper(color) from colors where upper(color) not in (select upper(word) from used where chat_id='"+chat_id+"') and substr(upper(color),1,1)='"+word[-1].upper()+"'")
         max=0;
         #Amounts of answers player can have, based on knonw words
         for el in have:
-            res=self.DB.query("select distinct upper(color) from colors,used where upper(color) not in (select upper(word) from used) and upper(color) not in ('"+el[0].upper()+"') and substr(upper(color),1,1)='"+el[0][-1].upper()+"'")
+            res=self.DB.query("select distinct upper(color) from colors where upper(color) not in (select upper(word) from used where chat_id='"+chat_id+"') and upper(color) not in ('"+el[0].upper()+"') and substr(upper(color),1,1)='"+el[0][-1].upper()+"'")
             if len(res)>max:
                 max=len(res)
             self.actions.append(action.Action(el[0]))

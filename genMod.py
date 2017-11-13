@@ -15,13 +15,12 @@ class Evolution:
         if res[0][0]==0:
             self.generation=self.getFirstGeneration()
         else:
-            # FILL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            pass
-
             tmp=self.DB.query("select strategy,fitness from strategies")
             self.generation=[0]*len(tmp)
             for i in range(0,len(tmp)):
                 self.generation[i]= tmp[i][0].split()
+                for j in range(0,len(self.generation[i])):
+                    self.generation[i][j]=float(self.generation[i][j].strip(','))
                 if tmp[i][1]=='':
                     self.fitness[i]=None
                     self.isTried[i]=False
@@ -32,14 +31,18 @@ class Evolution:
 
 
     def addToDB(self,generation,fitness,isTried):
-        self.DB.DML("delete from strategies")
+        #self.DB.DML("delete from strategies")
+        s=[]
+        s.append("delete from strategies")
         tmp=None
         for i in range(0,len(generation)):
             if isTried[i]==False:
                 tmp=""
             else:
                 tmp=fitness[i]
-            self.DB.DML("insert into strategies(strategy,fitness) values('"+', '.join(map(str,generation[i]))+"','"+str(tmp)+"')")
+            s.append("insert into strategies(strategy,fitness) values('"+', '.join(map(str,generation[i]))+"','"+str(tmp)+"')")
+            #self.DB.DML("insert into strategies(strategy,fitness) values('"+', '.join(map(str,generation[i]))+"','"+str(tmp)+"')")
+        self.DB.DML(s)
 
 
     def getFirstGeneration(self):

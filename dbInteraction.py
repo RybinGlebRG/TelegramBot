@@ -3,7 +3,9 @@ import urllib.parse as urlparse
 import os
 import state
 
-if state.local==True: tmp="postgres://postgres:postgres@127.0.0.1:5432/WORDS"
+if state.local:
+    tmp="postgres://postgres:postgres@127.0.0.1:5432/WORDS"
+
 class DBInteraction():
     if state.local==False:
         cur_env = os.environ['DATABASE_URL']
@@ -16,19 +18,8 @@ class DBInteraction():
     host = url.hostname
     port = url.port
 
-    '''
-    conn = psycopg2.connect(
-        database="WORDS",
-        #Change to something more secure
-        user="postgres",
-        password="postgres",
-        host="localhost",
-        port="5432"
-    )
-    '''
     conn = psycopg2.connect(
         database=dbname,
-        #Change to something more secure
         user=user,
         password=password,
         host=host,
@@ -49,7 +40,6 @@ class DBInteraction():
             self.port = self.url.port
             self.conn=psycopg2.connect(
                 database=self.dbname,
-                # Change to something more secure
                 user=self.user,
                 password=self.password,
                 host=self.host,
@@ -62,36 +52,24 @@ class DBInteraction():
             cursor.execute("delete from used")
             self.conn.commit()
 
-    def getUsedWords(self):
+    def getUsedWords(self,chat_id):
         self.checkConnection();
         with self.conn.cursor() as cursor:
-            cursor.execute("select upper(word) from used")
+            cursor.execute("select upper(word) from used where chat_id='"+chat_id+"'")
             res=cursor.fetchall()
             return res
 
-    def addUsedWord(self,wrd):
+    def addUsedWord(self,wrd,chat_id):
         self.checkConnection();
         with self.conn.cursor() as cursor:
-            cursor.execute("insert into used(word) values('" + wrd + "')")
+            cursor.execute("insert into used(word,chat_id) values('" + wrd + "', '"+chat_id+"')")
             self.conn.commit()
 
-    '''       
-    def insert(self,query):
-        self.checkConnection();
-        with self.conn.cursor() as cursor:
-            cursor.execute(query)
-            self.conn.commit()
-            
-    def delete(self,query):
-        self.checkConnection();
-        with self.conn.cursor() as cursor:
-            cursor.execute(query)
-            self.conn.commit()
-    '''
     def DML(self,str):
         self.checkConnection();
         with self.conn.cursor() as cursor:
-            cursor.execute(str)
+            for el in str:
+                cursor.execute(el)
             self.conn.commit()
 
     def query(self,str):
