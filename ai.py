@@ -3,6 +3,7 @@ import utility
 import genMod as gm
 import game
 import inputAnalyzer as ia
+import telebot
 
 class AI():
     db = dbInteraction.DBInteraction()
@@ -15,6 +16,8 @@ class AI():
 
     def startGame(self,game):
         #self.isGameStarted=True
+
+        # for i in range(len(missingKeywords)):
         game.isRunning = True
         self.db.deleteUsedWords()
 

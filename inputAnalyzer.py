@@ -1,4 +1,5 @@
 
+from telepot.telepot.namedtuple import InlineKeyboardButton, InlineKeyboardMarkup
 
 class InputAnalyzer:
 
@@ -10,7 +11,11 @@ class InputAnalyzer:
             else:
                 game.isRunning=True
                 startGame(game)
-                sendMessage(game.chat_id, "It's your move")
+                keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                    [InlineKeyboardButton(text='theme1', callback_data='theme~theme1')],
+                    [InlineKeyboardButton(text='theme2', callback_data='theme~theme2')]
+                ])
+                sendMessage(game.chat_id, "It's your move. Shoose theme:", reply_markup=keyboard)
                 #return "It's your move"
         elif game.isRunning:
             #return self.gameProcess(str,chat_id,cur_game)
