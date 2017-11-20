@@ -27,7 +27,7 @@ if not state.local:
 
     app = Flask(__name__)
 
-    webhook = OrderedWebhook(bot, {'chat': handle})
+    webhook = OrderedWebhook(bot, {'chat': handle, 'callback_query' : on_callback_query})
 
 
     @app.route('/bot' + TOKEN, methods=['GET', 'POST'])
