@@ -3,14 +3,17 @@ from telepot.telepot.namedtuple import InlineKeyboardButton, InlineKeyboardMarku
 
 class InputAnalyzer:
 
-    def analyze(self,wrd,game,gameProcess,idleChat,startGame,sendMessage):
+    def idleChat(self):
+        return "Game isn't started"
+
+    def analyze(self,wrd,game,play,sendMessage):
         if (wrd=="/startGame"):
             if game.isRunning:
-                #return "You have already started the game"
                 sendMessage(game.chat_id, "You have already started the game")
             else:
                 game.isRunning=True
-                startGame(game)
+
+                game.startGame()
                 keyboard = InlineKeyboardMarkup(inline_keyboard=[
                     [InlineKeyboardButton(text='theme1', callback_data='theme~theme1')],
                     [InlineKeyboardButton(text='theme2', callback_data='theme~theme2')]
@@ -18,8 +21,6 @@ class InputAnalyzer:
                 sendMessage(game.chat_id, "It's your move. Shoose theme:", reply_markup=keyboard)
                 #return "It's your move"
         elif game.isRunning:
-            #return self.gameProcess(str,chat_id,cur_game)
-            sendMessage(game.chat_id, gameProcess(str,game.chat_id,game))
+            sendMessage(game.chat_id, play(game,wrd))
         else:
-            #return self.idleChat()
-            sendMessage(game.chat_id, idleChat())
+            sendMessage(game.chat_id, self.idleChat())

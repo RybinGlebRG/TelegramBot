@@ -4,37 +4,44 @@ import os
 import state
 from os import environ
 
-if state.local:
-    # tmp="postgres://postgres:postgres@127.0.0.1:5432/WORDS"
-    # tmp = ""
-    tmp = environ['DATABASE_URL']
-
 class DBInteraction():
-    if state.local==False:
-        cur_env = os.environ['DATABASE_URL']
-    else:
-        cur_env=tmp
-    url = urlparse.urlparse(cur_env)
-    dbname = url.path[1:]
-    user = url.username
-    password = url.password
-    host = url.hostname
-    port = url.port
 
-    conn = psycopg2.connect(
-        database=dbname,
-        user=user,
-        password=password,
-        host=host,
-        port=port
-    )
+    cur_env=None
+    url = None
+    dbname = None
+    user = None
+    password = None
+    host = None
+    port = None
+
+    conn = None
+
+    def __init__(self):
+        self.cur_env=self.getDatabaseURL()
+        self.url = urlparse.urlparse(self.cur_env)
+        self.dbname = self.url.path[1:]
+        self.user = self.url.username
+        self.password = self.url.password
+        self.host = self.url.hostname
+        self.port = self.url.port
+        self.conn = psycopg2.connect(
+            database=self.dbname,
+            user=self.user,
+            password=self.password,
+            host=self.host,
+            port=self.port
+        )
+
+    def getDatabaseURL(self):
+        if state.local == False:
+            cur_env = os.environ['DATABASE_URL']
+        else:
+            cur_env = "postgres://postgres:postgres@127.0.0.1:5432/WORDS"
+        return  cur_env
 
     def checkConnection(self):
         if self.conn.closed!=0:
-            if state.local==False:
-                self.cur_env=os.environ['DATABASE_URL']
-            else:
-                self.cur_env=tmp;
+            self.cur_env=self.getDatabaseURL()
             self.url = urlparse.urlparse(self.cur_env)
             self.dbname = self.url.path[1:]
             self.user = self.url.username
@@ -49,6 +56,8 @@ class DBInteraction():
                 port=self.port
             )
 
+
+    # TODO Should not delete word for other chats
     def deleteUsedWords(self):
         self.checkConnection();
         with self.conn.cursor() as cursor:
@@ -81,6 +90,18 @@ class DBInteraction():
             cursor.execute(str)
             res=cursor.fetchall()
             return res
+
+    def getPossibleAnswers(self,chat_id,word):
+        have = self.DB.query(
+            "select distinct upper(color) from colors where upper(color) not in (select upper(word) from used where chat_id='" + chat_id + "') and substr(upper(color),1,1)='" +
+            word.upper() + "'")
+        return have
+
+    def getPossiblePlayerAnswers(self,chat_id,el):
+        res = self.DB.query(
+            "select distinct upper(color) from colors where upper(color) not in (select upper(word) from used where chat_id='" + chat_id + "') and upper(color) not in ('" +
+            el[0].upper() + "') and substr(upper(color),1,1)='" + el[0][-1].upper() + "'")
+        return  res
 
     def __exit__(self, exception_type, exception_value, traceback):
         self.conn.close();
