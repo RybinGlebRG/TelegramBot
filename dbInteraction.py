@@ -2,9 +2,7 @@ import psycopg2
 import urllib.parse as urlparse
 import os
 import state
-
-#if state.local:
-#    tmp="postgres://postgres:postgres@127.0.0.1:5432/WORDS"
+from os import environ
 
 class DBInteraction():
 

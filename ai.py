@@ -3,6 +3,7 @@ import utility
 import genMod as gm
 import game
 import inputAnalyzer as ia
+import telebot
 
 class AI():
     db = dbInteraction.DBInteraction()

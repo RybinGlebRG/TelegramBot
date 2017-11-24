@@ -1,16 +1,16 @@
 import telepot.telepot as tp
-import botAuthorization as ba
 import ai
 import state
+from os import environ
 
-
-TOKEN = ba.getToken()
+TOKEN = environ['TOKEN']
 bot = tp.Bot(TOKEN)
 
 if not state.local:
     import os
     from flask import Flask, request
     from telepot.telepot.loop import OrderedWebhook
+
 
     PORT = os.environ['PORT']
     AI = ai.AI()
@@ -27,7 +27,7 @@ if not state.local:
 
     app = Flask(__name__)
 
-    webhook = OrderedWebhook(bot, {'chat': handle})
+    webhook = OrderedWebhook(bot, {'chat': handle, 'callback_query' : on_callback_query})
 
 
     @app.route('/bot' + TOKEN, methods=['GET', 'POST'])
@@ -64,7 +64,15 @@ else:
             #bot.sendMessage(chat_id, answer)
 
 
-    MessageLoop(bot, handle).run_as_thread()
+    def on_callback_query(msg):
+        query_id, from_id, query_data = tp.glance(msg, flavor='callback_query')
+        print('Callback Query:', query_id, from_id, query_data)
+        if query_data[:query_data.find('~')] == 'theme':
+            bot.answerCallbackQuery(query_id, text='Got it, your theme is ' + query_data[query_data.find('~')+1:])
+
+
+
+    MessageLoop(bot, { 'chat':handle,  'callback_query' : on_callback_query}).run_as_thread()
     print('Listening ...')
 
     while (1):
