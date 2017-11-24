@@ -57,16 +57,16 @@ class UtilityCalc:
             tmp2=(nval-lval)*tmp
             return tmp2
 
-    def addActions(self,chat_id,word):
+    def addActions(self,chat_id,word,category):
         #Possible answers
         #have=self.DB.query("select distinct upper(color) from colors where upper(color) not in (select upper(word) from used where chat_id='"+chat_id+"') and substr(upper(color),1,1)='"+word[-1].upper()+"'")
-        have=self.DB.getPossibleAnswers(chat_id,word[-1])
+        have=self.DB.getPossibleAnswers(chat_id,word[-1],category)
         max=0;
 
         #Amounts of answers player can have, based on knonw words
         for el in have:
             #res=self.DB.query("select distinct upper(color) from colors where upper(color) not in (select upper(word) from used where chat_id='"+chat_id+"') and upper(color) not in ('"+el[0].upper()+"') and substr(upper(color),1,1)='"+el[0][-1].upper()+"'")
-            res=self.DB.getPossiblePlayerAnswers(chat_id,el)
+            res=self.DB.getPossiblePlayerAnswers(chat_id,el,category)
             if len(res)>max:
                 max=len(res)
             self.actions.append(action.Action(el[0]))

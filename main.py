@@ -1,9 +1,11 @@
 import telepot.telepot as tp
 import ai
 import state
+import botAuthorization as ba
 from os import environ
 
-TOKEN = environ['TOKEN']
+#TOKEN = environ['TOKEN']
+TOKEN = ba.getToken()
 bot = tp.Bot(TOKEN)
 
 if not state.local:
@@ -23,7 +25,11 @@ if not state.local:
             answer = AI.answer(msg['text'], str(chat_id),bot.sendMessage)
             # bot.sendMessage(chat_id, answer)
 
-
+    def on_callback_query(msg):
+        query_id, from_id, query_data = tp.glance(msg, flavor='callback_query')
+        print('Callback Query:', query_id, from_id, query_data)
+        if query_data[:query_data.find('~')] == 'theme':
+            bot.answerCallbackQuery(query_id, text='Got it, your theme is ' + query_data[query_data.find('~')+1:])
 
     app = Flask(__name__)
 

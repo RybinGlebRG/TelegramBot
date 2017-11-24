@@ -36,7 +36,7 @@ class DBInteraction():
         if state.local == False:
             cur_env = os.environ['DATABASE_URL']
         else:
-            cur_env = "postgres://postgres:postgres@127.0.0.1:5432/WORDS"
+            cur_env = "postgres://postgres:postgres@127.0.0.1:5432/WRDS"
         return  cur_env
 
     def checkConnection(self):
@@ -91,16 +91,16 @@ class DBInteraction():
             res=cursor.fetchall()
             return res
 
-    def getPossibleAnswers(self,chat_id,word):
-        have = self.DB.query(
-            "select distinct upper(color) from colors where upper(color) not in (select upper(word) from used where chat_id='" + chat_id + "') and substr(upper(color),1,1)='" +
+    def getPossibleAnswers(self,chat_id,word,category):
+        have = self.query(
+            "select distinct upper(word) from words where upper(category)='"+category.upper()+"' and upper(word) not in (select upper(word) from used where chat_id='" + chat_id + "') and substr(upper(word),1,1)='" +
             word.upper() + "'")
         return have
 
-    def getPossiblePlayerAnswers(self,chat_id,el):
-        res = self.DB.query(
-            "select distinct upper(color) from colors where upper(color) not in (select upper(word) from used where chat_id='" + chat_id + "') and upper(color) not in ('" +
-            el[0].upper() + "') and substr(upper(color),1,1)='" + el[0][-1].upper() + "'")
+    def getPossiblePlayerAnswers(self,chat_id,el,category):
+        res = self.query(
+            "select distinct upper(word) from words where upper(category)='"+category.upper()+"' and upper(word) not in (select upper(word) from used where chat_id='" + chat_id + "') and upper(word) not in ('" +
+            el[0].upper() + "') and substr(upper(word),1,1)='" + el[0][-1].upper() + "'")
         return  res
 
     def __exit__(self, exception_type, exception_value, traceback):

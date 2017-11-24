@@ -3,7 +3,7 @@ import utility
 import genMod as gm
 import game
 import inputAnalyzer as ia
-import telebot
+#import telebot
 
 class AI():
     db = dbInteraction.DBInteraction()
@@ -28,12 +28,13 @@ class AI():
         # TODO Get limits from user
         score_limit=0
         moves_limit=0
-        self.games.append(game.Game(chat_id,score_limit,moves_limit,self.db,self.evo))
+        category="colors"
+        self.games.append(game.Game(chat_id,score_limit,moves_limit,self.db,self.evo,category))
         cur_game = self.games[-1]
         return cur_game
 
     def checkGame(self,game):
-        if not game.isRunning():
+        if not game.isRunning:
             self.games.remove(game)
 
     def play(self,game,word):

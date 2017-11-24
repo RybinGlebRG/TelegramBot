@@ -7,20 +7,26 @@ class Game:
     ai_score=0
     user_score=0
     moves=0
-    chat_id = ""
+    chat_id = None
     Score=None
     db=None
     evo=None
-    uc=utility.UtilityCalc(evo)
+    uc=None
+    category=None
 
-    def __init__(self,chat_id,score_limit,moves_limit,db,evo):
+    def __init__(self,chat_id,score_limit,moves_limit,db,evo,category):
         self.chat_id=str(chat_id)
         self.Score=score.Score(score_limit,moves_limit)
         self.db=db
         self.evo=evo
+        self.uc = utility.UtilityCalc(evo)
+        self.category=category
 
     def startGame(self):
         self.isRunning = True
+        self.moves=0
+        self.user_score=0
+        self.ai_score=0
         self.db.deleteUsedWords()
 
     def closeGame(self,res):
@@ -55,6 +61,6 @@ class Game:
 
     def makeDecision(self,word,chat_id):
         self.uc.actions.clear()
-        self.uc.addActions(chat_id, word)
+        self.uc.addActions(chat_id, word,self.category)
         res=self.uc.getFittest()
         return res
