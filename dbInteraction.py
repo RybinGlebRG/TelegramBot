@@ -57,35 +57,41 @@ class DBInteraction():
             )
 
 
-    # TODO Should not delete word for other chats
-    def deleteUsedWords(self):
-        self.checkConnection();
+    def deleteUsedWords(self,chat_id):
+        self.checkConnection()
         with self.conn.cursor() as cursor:
-            cursor.execute("delete from used")
+            cursor.execute("delete from used where chat_id='"+chat_id+"'")
             self.conn.commit()
 
+    def deleteAllUsedWords(self):
+        self.checkConnection()
+        with self.conn.cursor() as cursor:
+            cursor.execute("delete from used ")
+            self.conn.commit()
+
+
     def getUsedWords(self,chat_id):
-        self.checkConnection();
+        self.checkConnection()
         with self.conn.cursor() as cursor:
             cursor.execute("select upper(word) from used where chat_id='"+chat_id+"'")
             res=cursor.fetchall()
             return res
 
     def addUsedWord(self,wrd,chat_id):
-        self.checkConnection();
+        self.checkConnection()
         with self.conn.cursor() as cursor:
             cursor.execute("insert into used(word,chat_id) values('" + wrd + "', '"+chat_id+"')")
             self.conn.commit()
 
     def DML(self,str):
-        self.checkConnection();
+        self.checkConnection()
         with self.conn.cursor() as cursor:
             for el in str:
                 cursor.execute(el)
             self.conn.commit()
 
     def query(self,str):
-        self.checkConnection();
+        self.checkConnection()
         with self.conn.cursor() as cursor:
             cursor.execute(str)
             res=cursor.fetchall()
@@ -104,4 +110,4 @@ class DBInteraction():
         return  res
 
     def __exit__(self, exception_type, exception_value, traceback):
-        self.conn.close();
+        self.conn.close()
