@@ -27,7 +27,7 @@ class Evolution:
                 else:
                     self.fitness[i] =int(tmp[i][1])
                     self.isTried[i]=True
-            print("LOL")
+
 
 
     def addToDB(self,generation,fitness,isTried):
