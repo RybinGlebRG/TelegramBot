@@ -7,6 +7,7 @@ import telepot.telepot as tp
 class Game:
 
     curQuestion=None
+    curAnswer=None
     isRunning=False
     ai_score=0
     user_score=0
@@ -33,6 +34,8 @@ class Game:
         self.user_score=0
         self.ai_score=0
         self.db.deleteUsedWords(self.chat_id)
+        self.curQuestion=None
+        self.curAnswer=None
 
     def closeGame(self,res):
         self.isRunning=False
@@ -57,8 +60,9 @@ class Game:
 
     def gameProcess(self):
         if self.IsUsed(self.curQuestion):
-            answer = "That word have already been used"
+            answer = "Это слово уже использовалось"
             return answer
+        self.user_score=self.recalcScore(self.user_score,self.curQuestion)
         self.db.addUsedWord(self.curQuestion, self.chat_id)
         if self.checkStatus():
             answer=None
@@ -70,7 +74,9 @@ class Game:
             self.closeGame(0)
         else:
             self.db.addUsedWord(answer, self.chat_id)
-        self.checkStatus()
+            self.ai_score = self.recalcScore(self.ai_score, answer)
+        self.curAnswer=answer
+
         return answer
 
     def makeDecision(self):
@@ -78,4 +84,12 @@ class Game:
         self.uc.addActions(self.chat_id, self.curQuestion,self.category)
         res=self.uc.getFittest()
         return res
+
+    def recalcScore(self,who,word):
+        sum=0
+        for letter in word:
+            sum+=self.Score.alphabet[letter.lower()]
+        who+=sum
+        return sum
+
 
