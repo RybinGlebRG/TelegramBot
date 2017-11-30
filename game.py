@@ -34,6 +34,8 @@ class Game:
         self.user_score=0
         self.ai_score=0
         self.db.deleteUsedWords(self.chat_id)
+        self.curQuestion=None
+        self.curAnswer=None
 
     def closeGame(self,res):
         self.isRunning=False
@@ -58,7 +60,7 @@ class Game:
 
     def gameProcess(self):
         if self.IsUsed(self.curQuestion):
-            answer = "That word have already been used"
+            answer = "Это слово уже использовалось"
             return answer
         self.user_score=self.recalcScore(self.user_score,self.curQuestion)
         self.db.addUsedWord(self.curQuestion, self.chat_id)
@@ -72,9 +74,9 @@ class Game:
             self.closeGame(0)
         else:
             self.db.addUsedWord(answer, self.chat_id)
-        self.checkStatus()
+            self.ai_score = self.recalcScore(self.ai_score, answer)
         self.curAnswer=answer
-        self.ai_score=self.recalcScore(self.ai_score,self.curAnswer)
+
         return answer
 
     def makeDecision(self):

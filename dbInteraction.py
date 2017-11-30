@@ -108,6 +108,9 @@ class DBInteraction():
             "select distinct upper(word) from words where upper(category)='"+category.upper()+"' and upper(word) not in (select upper(word) from used where chat_id='" + chat_id + "') and upper(word) not in ('" +
             el[0].upper() + "') and substr(upper(word),1,1)='" + el[0][-1].upper() + "'")
         return  res
+    def getCategories(self):
+        res=self.query("select distinct category from words")
+        return res
 
     def __exit__(self, exception_type, exception_value, traceback):
         self.conn.close()
