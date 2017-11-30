@@ -13,7 +13,7 @@ class Score:
 
     def createValues(self):
         for key in self.alphabet.keys():
-            self.alphabet[key]=random.randint(0,5)
+            self.alphabet[key]=random.randint(1,5)
 
     def isOver(self,ai_score,user_score,moves):
         if ai_score>=self.score_limit or user_score>=self.score_limit or moves>=self.moves_limit:

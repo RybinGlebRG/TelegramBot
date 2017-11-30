@@ -32,8 +32,11 @@ class Chat:
 
         elif self.game is not None:
             if self.game.isRunning:
-                self.game.curQuestion=word
-                self.bot.sendMessage(self.chat_id, self.game.gameProcess())
+                if self.checkUserWord(word):
+                    self.game.curQuestion=word
+                    self.bot.sendMessage(self.chat_id, self.game.gameProcess().title())
+                else:
+                    self.bot.sendMessage(self.chat_id, "Your word is incorrect")
             else:
                 self.bot.sendMessage(self.chat_id, self.idleChat())
         else:
@@ -45,6 +48,15 @@ class Chat:
 
     def idleChat(self):
         return "Game isn't started"
+
+    def checkUserWord(self,word):
+        if self.game.curAnswer is not None:
+            if word[0].upper()==self.game.curAnswer[-1].upper():
+                return True
+            else:
+                return False
+        else:
+            return True
 
 
     def getLimits(self):
