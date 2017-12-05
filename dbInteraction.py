@@ -1,40 +1,48 @@
 import psycopg2
 import urllib.parse as urlparse
 import os
-#tmp="postgres://dwwonxduejlzym:c179f509be3eca5de4a54fdb2bd6679b5f78d7c5fdc7a96ea2ce655c0494e6a0@ec2-50-19-89-124.compute-1.amazonaws.com:5432/d5ivqg5m5qbeir"
-class DBInteraction():
-    cur_env = os.environ['DATABASE_URL']
-    #cur_env=tmp
-    url = urlparse.urlparse(cur_env)
-    dbname = url.path[1:]
-    user = url.username
-    password = url.password
-    host = url.hostname
-    port = url.port
+import state
+from os import environ
 
-    '''
-    conn = psycopg2.connect(
-        database="WORDS",
-        #Change to something more secure
-        user="postgres",
-        password="postgres",
-        host="localhost",
-        port="5432"
-    )
-    '''
-    conn = psycopg2.connect(
-        database=dbname,
-        #Change to something more secure
-        user=user,
-        password=password,
-        host=host,
-        port=port
-    )
+class DBInteraction():
+
+    cur_env=None
+    url = None
+    dbname = None
+    user = None
+    password = None
+    host = None
+    port = None
+
+    conn = None
+
+    def __init__(self):
+        self.cur_env=self.getDatabaseURL()
+        self.url = urlparse.urlparse(self.cur_env)
+        self.dbname = self.url.path[1:]
+        self.user = self.url.username
+        self.password = self.url.password
+        self.host = self.url.hostname
+        self.port = self.url.port
+        self.conn = psycopg2.connect(
+            database=self.dbname,
+            user=self.user,
+            password=self.password,
+            host=self.host,
+            port=self.port
+        )
+
+    def getDatabaseURL(self):
+        if state.local == False:
+            cur_env = os.environ['DATABASE_URL']
+        else:
+            cur_env = "postgres://postgres:postgres@127.0.0.1:5432/WRDS"
+            cur_env="postgres://vninlnnvrzhuus:88f285ca4ebecf41e3b42c1d8f732b0fd1c80fc99df372b685f2d03196ed0574@ec2-54-243-47-252.compute-1.amazonaws.com:5432/d8pt0b38lc0vem"
+            return  cur_env
 
     def checkConnection(self):
         if self.conn.closed!=0:
-            self.cur_env=os.environ['DATABASE_URL']
-            #self.cur_env=tmp;
+            self.cur_env=self.getDatabaseURL()
             self.url = urlparse.urlparse(self.cur_env)
             self.dbname = self.url.path[1:]
             self.user = self.url.username
@@ -43,38 +51,67 @@ class DBInteraction():
             self.port = self.url.port
             self.conn=psycopg2.connect(
                 database=self.dbname,
-                # Change to something more secure
                 user=self.user,
                 password=self.password,
                 host=self.host,
                 port=self.port
             )
 
-    def deleteUsedWords(self):
-        self.checkConnection();
+
+    def deleteUsedWords(self,chat_id):
+        self.checkConnection()
         with self.conn.cursor() as cursor:
-            cursor.execute("delete from used")
+            cursor.execute("delete from used where chat_id='"+chat_id+"'")
             self.conn.commit()
 
-    def getUsedWords(self):
-        self.checkConnection();
+    def deleteAllUsedWords(self):
+        self.checkConnection()
         with self.conn.cursor() as cursor:
-            cursor.execute("select word from used")
+            cursor.execute("delete from used ")
+            self.conn.commit()
+
+
+    def getUsedWords(self,chat_id):
+        self.checkConnection()
+        with self.conn.cursor() as cursor:
+            cursor.execute("select upper(word) from used where chat_id='"+chat_id+"'")
             res=cursor.fetchall()
             return res
 
-    def addUsedWord(self,wrd):
-        self.checkConnection();
+    def addUsedWord(self,wrd,chat_id):
+        self.checkConnection()
         with self.conn.cursor() as cursor:
-            cursor.execute("insert into used(word) values('" + wrd + "')")
+            cursor.execute("insert into used(word,chat_id) values('" + wrd + "', '"+chat_id+"')")
+            self.conn.commit()
+
+    def DML(self,str):
+        self.checkConnection()
+        with self.conn.cursor() as cursor:
+            for el in str:
+                cursor.execute(el)
             self.conn.commit()
 
     def query(self,str):
-        self.checkConnection();
+        self.checkConnection()
         with self.conn.cursor() as cursor:
             cursor.execute(str)
             res=cursor.fetchall()
             return res
 
+    def getPossibleAnswers(self,chat_id,word,category):
+        have = self.query(
+            "select distinct upper(word) from words where upper(category)='"+category.upper()+"' and upper(word) not in (select upper(word) from used where chat_id='" + chat_id + "') and substr(upper(word),1,1)='" +
+            word.upper() + "'")
+        return have
+
+    def getPossiblePlayerAnswers(self,chat_id,el,category):
+        res = self.query(
+            "select distinct upper(word) from words where upper(category)='"+category.upper()+"' and upper(word) not in (select upper(word) from used where chat_id='" + chat_id + "') and upper(word) not in ('" +
+            el[0].upper() + "') and substr(upper(word),1,1)='" + el[0][-1].upper() + "'")
+        return  res
+    def getCategories(self):
+        res=self.query("select distinct category from words")
+        return res
+
     def __exit__(self, exception_type, exception_value, traceback):
-        self.conn.close();
+        self.conn.close()

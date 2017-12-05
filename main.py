@@ -1,37 +1,31 @@
-#import time
 import telepot.telepot as tp
-#from telepot.telepot.loop import MessageLoop
-import os
+import ai
+import state
 import botAuthorization as ba
+from os import environ
+import time
+import requests as rq
+from telepot.telepot.loop import MessageLoop
+import os
 from flask import Flask, request
 from telepot.telepot.loop import OrderedWebhook
 
-#Fake token, change to valid one
-TOKEN=ba.getToken()
+TOKEN = ba.getToken()
 bot = tp.Bot(TOKEN)
-
-PORT=os.environ['PORT']
-import ai
-AI = ai.AI()
-
-def handle(msg):
-    content_type, chat_type, chat_id = tp.glance(msg)
-    if content_type == 'text':
-        answer=AI.answer(msg['text'])
-        bot.sendMessage(chat_id, answer)
-
+AI = ai.AI(bot)
 app = Flask(__name__)
+webhook = OrderedWebhook(bot, {'chat': AI.analyzer.handle, 'callback_query': AI.analyzer.on_callback_query})
 
-webhook = OrderedWebhook(bot, {'chat': handle})
-
-@app.route('/bot'+TOKEN, methods=[ 'GET','POST'])
+@app.route('/bot' + TOKEN, methods=['GET', 'POST'])
 def pass_update():
     webhook.feed(request.data)
     return 'OK'
 
-if __name__ == '__main__':
+
+if not state.local:
+    PORT = os.environ['PORT']
     try:
-        bot.setWebhook('sinmo.herokuapp.com/bot'+TOKEN)
+        bot.setWebhook('sinmo.herokuapp.com/bot' + TOKEN)
     # Sometimes it would raise this error, but webhook still set successfully.
     except tp.exception.TooManyRequestsError:
         pass
@@ -39,4 +33,11 @@ if __name__ == '__main__':
     webhook.run_as_thread()
     app.run(host='0.0.0.0', port=int(PORT))
 
+else:
 
+    response = rq.get("https://api.telegram.org/bot" + TOKEN + "/setWebhook")
+    print(response.content)
+    MessageLoop(bot, {'chat': AI.analyzer.handle, 'callback_query': AI.analyzer.on_callback_query}).run_as_thread()
+    print('Listening ...')
+    while (1):
+        time.sleep(10)
