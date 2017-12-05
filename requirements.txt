@@ -1,7 +1,6 @@
 psycopg2
 urllib3
 flask
-os
 random
 time
 requests
