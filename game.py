@@ -38,6 +38,7 @@ class Game:
         self.curQuestion=None
         self.curAnswer=None
 
+    # TODO Implement this
     def fillDB(self,category):
         pass
 
@@ -61,28 +62,7 @@ class Game:
             if elem[0]==wrd.upper():
                 return True
         return False
-    '''
-    def gameProcess(self):
-        if self.IsUsed(self.curQuestion):
-            answer = "Это слово уже использовалось"
-            return answer
-        self.user_score=self.recalcScore(self.user_score,self.curQuestion)
-        self.db.addUsedWord(self.curQuestion, self.chat_id)
-        if self.checkStatus():
-            answer=None
-        else:
-            answer=self.makeDecision()
-        self.curQuestion=None
-        if answer is None:
-            answer = "Have lost"
-            self.closeGame(0)
-        else:
-            self.db.addUsedWord(answer, self.chat_id)
-            self.ai_score = self.recalcScore(self.ai_score, answer)
-        self.curAnswer=answer
 
-        return answer
-    '''
     def gameProcessNew(self,word):
         if not self.registerQuestion(word):
             return False
