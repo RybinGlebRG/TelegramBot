@@ -38,6 +38,7 @@ class Chat:
                 if self.checkUserWord(word):
                     self.game.curQuestion=word
                     answer=self.game.gameProcess()
+                    # TODO Change
                     if self.game.checkStatus():
                         answer+=". Game is over."
                     self.bot.sendMessage(self.chat_id, answer.title())
@@ -46,7 +47,82 @@ class Chat:
             else:
                 self.bot.sendMessage(self.chat_id, self.idleChat())
 
+    def analyzeNew(self,word):
+        if word=="Начать новую игру":
+            self.startNewGame()
+        elif word == "Закончить текущую игру":
+            self.finishCurrentGame()
+            self.menu=None
+        elif (word=="/start"):
+            self.bot.sendMessage(self.chat_id, 'Сыграем?', reply_markup=kb.kbNG)
+        elif word == "Текущий счет":
+            if self.game.isRunning:
+                self.bot.sendMessage(self.chat_id, 'Счет: Я: '+str(self.game.ai_score)+", Вы: "+str(self.game.user_score))
+            else:
+                self.bot.sendMessage(self.chat_id, "Игра не начата")
+            self.menu = None
+        else:
+            if self.game.isRunning:
+                if not self.game.registerQuestion(word):
+                    self.bot.sendMessage(self.chat_id, self.game.curComment)
+                else:
+                    if not self.game.checkUser():
+                        self.bot.sendMessage(self.chat_id, "Вы выиграли")
+                        self.bot.sendMessage(self.chat_id,
+                                             "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
+                                                 self.game.user_score))
+                        self.game.closeGame(0)
+                        return
 
+                    if not self.game.getAnswer():
+                        self.bot.sendMessage(self.chat_id, "Вы выиграли")
+                        self.bot.sendMessage(self.chat_id,
+                                             "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
+                                                 self.game.user_score))
+                        self.game.closeGame(0)
+                        return
+                    else:
+                        answer = self.game.curAnswer
+                        self.bot.sendMessage(self.chat_id, answer.title())
+                        if not self.game.checkAI():
+                            self.bot.sendMessage(self.chat_id, "Вы проиграли")
+                            self.bot.sendMessage(self.chat_id,
+                                                 "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
+                                                     self.game.user_score))
+                            self.game.closeGame(1)
+                            return
+                '''
+                if self.game.gameProcessNew(word):
+                    answer=self.game.curAnswer
+                    self.bot.sendMessage(self.chat_id, answer.title())
+                    return
+                else:
+                    if self.game.curComment is None:
+                        self.announceWinner()
+                        return
+                    else:
+                        self.bot.sendMessage(self.chat_id,self.game.curComment)
+                        return
+                '''
+            else:
+                self.bot.sendMessage(self.chat_id, "Игра не начата")
+
+    '''
+    def announceWinner(self):
+        winner = self.game.determineWinner()
+        if winner:
+            self.bot.sendMessage(self.chat_id, "Вы проиграли")
+            self.bot.sendMessage(self.chat_id,
+                                 "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(self.game.user_score))
+            self.game.closeGame(1)
+            return
+        else:
+            self.bot.sendMessage(self.chat_id, "Вы выиграли")
+            self.bot.sendMessage(self.chat_id,
+                                 "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(self.game.user_score))
+            self.game.closeGame(0)
+            return
+    '''
     def start(self,category,score_limit,moves_limit):
         self.game.startGame(category, score_limit, moves_limit)
         self.bot.sendMessage(self.chat_id, "Ваш ход")
@@ -77,12 +153,14 @@ class Chat:
         else:
             return True
 
+
     def getLimits(self):
         if self.menu is None:
             msg=self.bot.sendMessage(self.chat_id, "Ну и как поступим?", reply_markup=kb.kbMain)
             self.menu = tp.message_identifier(msg)
         else:
             self.bot.editMessageText(self.menu, text="Ну и как поступим?", reply_markup=kb.kbMain)
+
 
 
     def on_callback_query(self, msg):

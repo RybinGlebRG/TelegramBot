@@ -44,7 +44,7 @@ class AI():
 
     def answer(self, str,chat_id):
         cur_chat=self.findOrCreateChat(chat_id)
-        cur_chat.analyze(str)
+        cur_chat.analyzeNew(str)
 
     def __exit__(self, exception_type, exception_value, traceback):
         pass

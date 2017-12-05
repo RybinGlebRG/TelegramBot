@@ -37,6 +37,7 @@ class DBInteraction():
             cur_env = os.environ['DATABASE_URL']
         else:
             cur_env = "postgres://postgres:postgres@127.0.0.1:5432/WRDS"
+            cur_env="postgres://vninlnnvrzhuus:88f285ca4ebecf41e3b42c1d8f732b0fd1c80fc99df372b685f2d03196ed0574@ec2-54-243-47-252.compute-1.amazonaws.com:5432/d8pt0b38lc0vem"
             return  cur_env
 
     def checkConnection(self):

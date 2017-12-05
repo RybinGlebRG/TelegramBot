@@ -8,6 +8,7 @@ class Game:
 
     curQuestion=None
     curAnswer=None
+    curComment=None
     isRunning=False
     ai_score=0
     user_score=0
@@ -79,6 +80,67 @@ class Game:
 
         return answer
 
+    def gameProcessNew(self,word):
+        if not self.registerQuestion(word):
+            return False
+        self.user_score = self.recalcScore(self.user_score, self.curQuestion)
+        if not self.checkNew():
+            return False
+        if not self.getAnswer():
+            return False
+        self.ai_score = self.recalcScore(self.ai_score, self.curAnswer)
+        if not self.checkNew():
+            return False
+        return True
+
+    def determineWinner(self):
+        if self.user_score > self.ai_score:
+            return False
+        else:
+            return True
+
+    def registerQuestion(self,word):
+        self.curComment=None
+        if self.curAnswer is not None:
+            if word[0].upper()!=self.curAnswer[-1].upper():
+                self.curComment="Некорректное слово"
+                return False
+        self.curAnswer=None
+        if self.IsUsed(word):
+            self.curComment="Это слово уже использовалось"
+            return False
+        self.curQuestion=word
+        self.db.addUsedWord(self.curQuestion, self.chat_id)
+        return True
+
+    def getAnswer(self):
+        answer = self.makeDecision()
+        self.curQuestion = None
+
+        if answer is None:
+            return False
+        else:
+            self.db.addUsedWord(answer, self.chat_id)
+            self.curAnswer = answer
+            return True
+
+    def checkAI(self):
+        self.ai_score = self.recalcScore(self.ai_score, self.curAnswer)
+        if self.Score.isOver(self.ai_score, self.user_score, self.moves):
+            return False
+        return True
+
+    def checkUser(self):
+        self.user_score = self.recalcScore(self.user_score, self.curQuestion)
+        if self.Score.isOver(self.ai_score, self.user_score, self.moves):
+            return False
+        return True
+
+    def checkNew(self):
+        if self.Score.isOver(self.ai_score, self.user_score, self.moves):
+            return False
+        return True
+
     def makeDecision(self):
         self.uc.actions.clear()
         self.uc.addActions(self.chat_id, self.curQuestion,self.category)
@@ -89,7 +151,7 @@ class Game:
         sum=0
         for letter in word:
             sum+=self.Score.alphabet[letter.lower()]
-        who+=sum
+        sum+=who
         return sum
 
 
