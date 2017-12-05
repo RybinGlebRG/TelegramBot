@@ -21,6 +21,7 @@ class Chat:
         self.game=game.Game(self.chat_id,self.db,self.evo)
         self.Keyboards=kb.Keyboards(self.db)
 
+    '''
     def analyze(self,word):
         if word=="Начать новую игру":
             self.startNewGame()
@@ -46,7 +47,7 @@ class Chat:
                     self.bot.sendMessage(self.chat_id, "Это слово неправильное")
             else:
                 self.bot.sendMessage(self.chat_id, self.idleChat())
-
+    '''
     def analyzeNew(self,word):
         if word=="Начать новую игру":
             self.startNewGame()
@@ -75,7 +76,7 @@ class Chat:
                         return
 
                     if not self.game.getAnswer():
-                        self.bot.sendMessage(self.chat_id, "Вы выиграли")
+                        self.bot.sendMessage(self.chat_id, "Не могу найти слово.. Вы выиграли")
                         self.bot.sendMessage(self.chat_id,
                                              "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
                                                  self.game.user_score))
@@ -91,19 +92,7 @@ class Chat:
                                                      self.game.user_score))
                             self.game.closeGame(1)
                             return
-                '''
-                if self.game.gameProcessNew(word):
-                    answer=self.game.curAnswer
-                    self.bot.sendMessage(self.chat_id, answer.title())
-                    return
-                else:
-                    if self.game.curComment is None:
-                        self.announceWinner()
-                        return
-                    else:
-                        self.bot.sendMessage(self.chat_id,self.game.curComment)
-                        return
-                '''
+
             else:
                 self.bot.sendMessage(self.chat_id, "Игра не начата")
 
@@ -177,7 +166,7 @@ class Chat:
                 self.menu=None
                 self.start(self.category, self.score_limit, self.moves_limit)
             elif query_data[query_data.find('~') + 1:] == 'Own Game':
-                self.bot.editMessageText(self.menu, text="Выберите тему", reply_markup=self.Keyboards.getKeyboard("kbCategories"))
+                self.bot.editMessageText(self.menu, text="Выберите тему", reply_markup=kb.kbCategories)
         elif query_data[:query_data.find('~')] == 'category':
             self.category = query_data[query_data.find('~') + 1:]
             self.bot.editMessageText(self.menu, text="Выберите количество очков", reply_markup=kb.kbScores)
