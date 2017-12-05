@@ -24,6 +24,7 @@ class DBInteraction():
         self.password = self.url.password
         self.host = self.url.hostname
         self.port = self.url.port
+        print(self.port)
         self.conn = psycopg2.connect(
             database=self.dbname,
             user=self.user,
@@ -35,7 +36,7 @@ class DBInteraction():
     def getDatabaseURL(self):
         if state.local == False:
             cur_env = os.environ['DATABASE_URL']
-            print(cur_env)
+            #print(cur_env)
         else:
             cur_env = "postgres://postgres:postgres@127.0.0.1:5432/WRDS"
             
