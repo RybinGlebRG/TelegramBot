@@ -7,10 +7,12 @@ kbMain = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Своя игра', callback_data='main~Own Game')]
 ])
 
-# TODO Get values from database
-#kbCategories = InlineKeyboardMarkup(inline_keyboard=[
-#    [InlineKeyboardButton(text='Цвета', callback_data='category~Colors')]
-#])
+
+kbCategories = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='Цвета', callback_data='category~Colors')],
+[InlineKeyboardButton(text='Животные', callback_data='category~Colors')],
+[InlineKeyboardButton(text='Города', callback_data='category~Colors')]
+])
 
 kbScores = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='10', callback_data='scoreLimit~10')]

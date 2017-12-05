@@ -38,6 +38,9 @@ class Game:
         self.curQuestion=None
         self.curAnswer=None
 
+    def fillDB(self,category):
+        pass
+
     def closeGame(self,res):
         self.isRunning=False
         self.evo.setFitness(res)
@@ -58,7 +61,7 @@ class Game:
             if elem[0]==wrd.upper():
                 return True
         return False
-
+    '''
     def gameProcess(self):
         if self.IsUsed(self.curQuestion):
             answer = "Это слово уже использовалось"
@@ -79,7 +82,7 @@ class Game:
         self.curAnswer=answer
 
         return answer
-
+    '''
     def gameProcessNew(self,word):
         if not self.registerQuestion(word):
             return False
