@@ -14,10 +14,17 @@ class AI():
     chats=[]
 
     def __init__(self,bot):
+
         self.bot=bot
         self.db = dbInteraction.DBInteraction()
         self.db.deleteAllUsedWords()
         self.analyzer = ia.InputAnalyzer(self.answer,self.chats)
+        ###########################################
+        #self.db.DML(["delete from words","insert into words(word,category) values('Белый','Цвета')","insert into words(word,category) values('Черный','Цвета')",
+         #           "insert into words(word,category) values('Красный','Цвета')"
+
+#                     ])
+        ###########################################
 
     def findOrCreateChat(self,chat_id):
         cur_chat=None

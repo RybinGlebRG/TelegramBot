@@ -36,10 +36,13 @@ class DBInteraction():
     def getDatabaseURL(self):
         if state.local == False:
             cur_env = os.environ['DATABASE_URL']
+
         else:
             cur_env = "postgres://postgres:postgres@127.0.0.1:5432/WRDS"
+
             
         return  cur_env
+
 
     def checkConnection(self):
         if self.conn.closed!=0:
