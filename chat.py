@@ -38,34 +38,37 @@ class Chat:
                 self.bot.sendMessage(self.chat_id, "Игра не начата")
         else:
             if self.game.isRunning:
-                if not self.game.registerQuestion(word):
-                    self.bot.sendMessage(self.chat_id, self.game.curComment)
-                else:
-                    if not self.game.checkUser():
-                        self.bot.sendMessage(self.chat_id, "Вы выиграли")
-                        self.bot.sendMessage(self.chat_id,
-                                             "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
-                                                 self.game.user_score))
-                        self.game.closeGame(0)
-                        return
-
-                    if not self.game.getAnswer():
-                        self.bot.sendMessage(self.chat_id, "Не могу найти слово.. Вы выиграли")
-                        self.bot.sendMessage(self.chat_id,
-                                             "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
-                                                 self.game.user_score))
-                        self.game.closeGame(0)
-                        return
+                try:
+                    if not self.game.registerQuestion(word):
+                        self.bot.sendMessage(self.chat_id, self.game.curComment)
                     else:
-                        answer = self.game.curAnswer
-                        self.bot.sendMessage(self.chat_id, answer.title())
-                        if not self.game.checkAI():
-                            self.bot.sendMessage(self.chat_id, "Вы проиграли")
+                        if not self.game.checkUser():
+                            self.bot.sendMessage(self.chat_id, "Вы выиграли")
                             self.bot.sendMessage(self.chat_id,
                                                  "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
                                                      self.game.user_score))
-                            self.game.closeGame(1)
+                            self.game.closeGame(0)
                             return
+
+                        if not self.game.getAnswer():
+                            self.bot.sendMessage(self.chat_id, "Не могу найти слово.. Вы выиграли")
+                            self.bot.sendMessage(self.chat_id,
+                                                 "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
+                                                     self.game.user_score))
+                            self.game.closeGame(0)
+                            return
+                        else:
+                            answer = self.game.curAnswer
+                            self.bot.sendMessage(self.chat_id, answer.title())
+                            if not self.game.checkAI():
+                                self.bot.sendMessage(self.chat_id, "Вы проиграли")
+                                self.bot.sendMessage(self.chat_id,
+                                                     "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
+                                                         self.game.user_score))
+                                self.game.closeGame(1)
+                                return
+                except KeyError:
+                    self.bot.sendMessage(self.chat_id, "Встретился некорректный символ")
 
             else:
                 self.bot.sendMessage(self.chat_id, "Игра не начата")
