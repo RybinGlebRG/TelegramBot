@@ -73,14 +73,16 @@ class DBInteraction():
 	def updateCategoryWordsBase(self,category):
 		words = []
 		words = internetInteraction.getWords(100)
-		words.append('Лиловый')
 		s = ""
 		self.checkConnection()
 		with self.conn.cursor() as cursor:
 			for i in range(len(words)):
 				s = "insert into words(word,category) values('"
 				s += words[i] + "', '" + category + "');"
-				cursor.execute(s)
+				try:
+					cursor.execute(s)
+				except Exception as e:
+					print(e)
 			self.conn.commit()
 		pass
 
