@@ -9,9 +9,9 @@ kbMain = InlineKeyboardMarkup(inline_keyboard=[
 
 
 kbCategories = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text='Цвета', callback_data='category~Colors')],
-[InlineKeyboardButton(text='Животные', callback_data='category~Colors')],
-[InlineKeyboardButton(text='Города', callback_data='category~Colors')]
+    [InlineKeyboardButton(text='Цвета', callback_data='category~Цвета')],
+[InlineKeyboardButton(text='Животные', callback_data='category~Животные')],
+[InlineKeyboardButton(text='Города', callback_data='category~Города')]
 ])
 
 kbScores = InlineKeyboardMarkup(inline_keyboard=[
