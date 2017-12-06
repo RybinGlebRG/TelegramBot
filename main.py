@@ -9,8 +9,13 @@ from telepot.telepot.loop import MessageLoop
 import os
 from flask import Flask, request
 from telepot.telepot.loop import OrderedWebhook
+import liubastemstaff
 
-TOKEN = ba.getToken()
+if state.owner == 'liuba':
+    TOKEN = liubastemstaff.token
+else:
+    TOKEN = ba.getToken()
+
 bot = tp.Bot(TOKEN)
 AI = ai.AI(bot)
 app = Flask(__name__)

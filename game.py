@@ -35,6 +35,7 @@ class Game:
         self.user_score=0
         self.ai_score=0
         self.db.deleteUsedWords(self.chat_id)
+        self.db.updateCategoryWordsBase(category)
         self.curQuestion=None
         self.curAnswer=None
 
