@@ -78,7 +78,7 @@ class DBInteraction():
 		with self.conn.cursor() as cursor:
 			for i in range(len(words)):
 				s = "insert into words(word,category) values('"
-				s += words[i] + "', '" + category + "');"
+				s += words[i] + "', '" + "Города" + "');"
 				try:
 					cursor.execute(s)
 				except Exception as e:
