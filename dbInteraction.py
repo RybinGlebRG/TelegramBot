@@ -175,11 +175,11 @@ class DBInteraction():
 		flag = False
 		self.checkConnection()
 		with self.conn.cursor() as cursor:
-			str = "select distinct lower(word) from words where word ='" + word + "';"
+			str = "select distinct lower(word) from words where lower(word) ='" + word.lower() + "';"
 			try:
 				cursor.execute(str)
 				a = cursor.fetchall()
-				if (a[0][0]).Lower == word.Lower:
+				if (a[0][0]) == word.lower():
 					flag = True
 			except Exception as e:
 				print(e)

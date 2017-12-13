@@ -64,9 +64,12 @@ LIMIT 500
 		results = sparql.query().convert()
 		for result in results["results"]["bindings"]:
 			res_name = result["label"]["value"]
-			res_arr.add(re.split("[,\(]",res_name)[0])
+			res_arr.add(re.split("[,\(]",res_name)[0].strip())
 
 	except Exception as e:
 		print("ERRR in 1")
 		print(e)
 	return res_arr
+
+def checkIfWorlRight(word):
+	return False

@@ -115,7 +115,7 @@ class Chat:
             self.FSM.handler("Очки")
         elif query_data[:query_data.find('~')] == 'movesLimit':
             self.moves_limit = query_data[query_data.find('~') + 1:]
-            self.bot.editMessageText(self.FSM.menu, text="Тема: "+self.category+", очки: "+str(self.score_limit)+", ходы: "+str(self.moves_limit), reply_markup=None)
+            self.bot.editMessageText(self.FSM.menu, text="Тема: "+self.category+", очки: "+str(self.score_limit)+", ходы: "+str(self.moves_limit) + "\n Пожалуйста, подождите хочу посчитать сколько очков будет за каждую букву.", reply_markup=None)
             self.FSM.handler("Ходы")
             self.start(self.category, self.score_limit, self.moves_limit)
         elif query_data[:query_data.find('~')]=="confirm":
