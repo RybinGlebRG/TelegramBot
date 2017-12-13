@@ -70,6 +70,21 @@ class DBInteraction():
 			cursor.execute("delete from used where chat_id='"+chat_id+"'")
 			self.conn.commit()
 
+	def getNumberOfCurrCatwords(self, category):
+		self.checkConnection()
+		with self.conn.cursor() as cursor:
+			s = "insert count(*) from word where category=" + category
+
+			try:
+				cursor.execute(s)
+			except Exception as e:
+				print(e)
+			res = cursor.fetchall()
+
+			return res
+
+
+
 	def updateCategoryWordsBase(self,category):
 		words = []
 		words = internetInteraction.getWords(100, category)

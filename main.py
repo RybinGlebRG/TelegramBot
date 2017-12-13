@@ -9,10 +9,11 @@ from telepot.telepot.loop import MessageLoop
 import os
 from flask import Flask, request
 from telepot.telepot.loop import OrderedWebhook
-import liubastemstaff
+
 
 if state.owner == 'liuba':
-    TOKEN = liubastemstaff.token
+    with open("liuba.txt") as f:
+        TOKEN = f.readline()
 else:
     TOKEN = ba.getToken()
 
