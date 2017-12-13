@@ -115,9 +115,9 @@ class DBInteraction():
         self.checkConnection()
         with self.conn.cursor() as cursor:
             for i in range(len(words)):
-                s = "insert into words(word,category) values('%s', '%s');" % (words[i], category)
+                s = "insert into words(word,category) values(%s, %s);"
                 try:
-                    cursor.execute(s)
+                    cursor.execute(s, (words[i], category))
                 except Exception as e:
                     print(e)
             self.conn.commit()
@@ -154,7 +154,10 @@ class DBInteraction():
         self.checkConnection()
         with self.conn.cursor() as cursor:
             for el in str:
-                cursor.execute(el)
+                try:
+                    cursor.execute(el)
+                except psycopg2.IntegrityError:
+                    pass
             self.conn.commit()
 
     def query(self, str):

@@ -20,7 +20,7 @@ kbCategories = InlineKeyboardMarkup(inline_keyboard=[
 [InlineKeyboardButton(text='Пьесы', callback_data='category~Play')],
 [InlineKeyboardButton(text='Еда', callback_data='category~Food')],
 [InlineKeyboardButton(text='Звезды', callback_data='category~Star')],
-[InlineKeyboardButton(text='Книги', callback_data='category~VideoGame')],
+[InlineKeyboardButton(text='Видеоигры', callback_data='category~VideoGame')],
 [InlineKeyboardButton(text='Лекарственные препараты', callback_data='category~Drug')],
 [InlineKeyboardButton(text='Фильмы', callback_data='category~Film')]
 ])
@@ -52,7 +52,8 @@ kbNG = ReplyKeyboardMarkup(keyboard=
     KeyboardButton(text='Начать новую игру'),
     KeyboardButton(text='Закончить текущую игру')
 ],
-[KeyboardButton(text='Текущий счет')]
+[KeyboardButton(text='Текущий счет')],
+[KeyboardButton(text='Авторы')]
 ], resize_keyboard=True)
 
 

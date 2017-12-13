@@ -36,6 +36,9 @@ class Chat:
                 self.bot.sendMessage(self.chat_id, 'Счет: Я: '+str(self.game.ai_score)+", Вы: "+str(self.game.user_score))
             else:
                 self.bot.sendMessage(self.chat_id, "Игра не начата")
+        elif word == "Авторы":
+            self.bot.sendMessage(self.chat_id, "Самые крутые разработчики, Люба и Глеб")
+            self.bot.sendMessage(self.chat_id, "Продолжим?")
         else:
             if self.game.isRunning:
                 #try:
@@ -122,12 +125,18 @@ class Chat:
             self.start(self.category, self.score_limit, self.moves_limit)
         elif query_data[:query_data.find('~')]=="confirm":
             if query_data[query_data.find('~') + 1:]=="Yes":
+                self.bot.sendMessage(self.chat_id,
+                                     "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
+                                         self.game.user_score))
                 self.game.closeGame(0)
                 self.FSM.handler("yes")
             else:
                 self.FSM.handler("no")
         elif query_data[:query_data.find('~')]=="confirmNG":
             if query_data[query_data.find('~') + 1:]=="Yes":
+                self.bot.sendMessage(self.chat_id,
+                                     "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
+                                         self.game.user_score))
                 self.game.closeGame(0)
                 self.FSM.handler("yes")
 
