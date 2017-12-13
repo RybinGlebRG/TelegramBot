@@ -72,13 +72,13 @@ class DBInteraction():
 
 	def updateCategoryWordsBase(self,category):
 		words = []
-		words = internetInteraction.getWords(100)
+		words = internetInteraction.getWords(100, category)
 		s = ""
 		self.checkConnection()
 		with self.conn.cursor() as cursor:
 			for i in range(len(words)):
 				s = "insert into words(word,category) values('"
-				s += words[i] + "', '" + "Города" + "');"
+				s += words[i] + "', '" + category + "');"
 				try:
 					cursor.execute(s)
 				except Exception as e:
@@ -91,7 +91,8 @@ class DBInteraction():
 		with self.conn.cursor() as cursor:
 			cursor.execute("select word, category from words")
 			res = cursor.fetchall()
-		print(res)
+		for i in res:
+			print(i)
 
 
 	def deleteAllUsedWords(self):
