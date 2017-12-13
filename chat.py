@@ -96,11 +96,11 @@ class Chat:
         print('Callback Query:', query_id, from_id, query_data)
         if query_data[:query_data.find('~')] == 'main':
             if query_data[query_data.find('~') + 1:]=="Quick Game":
-                self.category="Цвета"
-                self.score_limit=20
-                self.moves_limit=5
+                self.category="Города"
+                self.score_limit=2000
+                self.moves_limit=15
                 self.bot.editMessageText(self.FSM.menu,
-                                         text="Тема: " + self.category + ", очки: " + str(self.score_limit) + ", ходы: " + str(self.moves_limit),
+                                         text="Тема: " + self.category + ", очки: " + str(self.score_limit) + ", ходы: " + str(self.moves_limit) + "\n Подождите пожалуйста, пока я не выведу таблицу счета очков",
                                          reply_markup=None)
                 self.FSM.handler("Быстря игра")
 
@@ -115,7 +115,7 @@ class Chat:
             self.FSM.handler("Очки")
         elif query_data[:query_data.find('~')] == 'movesLimit':
             self.moves_limit = query_data[query_data.find('~') + 1:]
-            self.bot.editMessageText(self.FSM.menu, text="Тема: "+self.category+", очки: "+str(self.score_limit)+", ходы: "+str(self.moves_limit), reply_markup=None)
+            self.bot.editMessageText(self.FSM.menu, text="Тема: "+self.category+", очки: "+str(self.score_limit)+", ходы: "+str(self.moves_limit) + "\n Пожалуйста, подождите хочу посчитать сколько очков будет за каждую букву.", reply_markup=None)
             self.FSM.handler("Ходы")
             self.start(self.category, self.score_limit, self.moves_limit)
         elif query_data[:query_data.find('~')]=="confirm":

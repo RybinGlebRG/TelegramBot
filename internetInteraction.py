@@ -30,13 +30,13 @@ WHERE {
    FILTER ( lang(?label) = 'ru' and ?pop>10000 and ?ccs IN (dbpedia-owl:City, dbpedia-owl:Town))
 }
 Order by DESC(?pop)
-LIMIT 200
+LIMIT 500
 		""")
 		sparql.setReturnFormat(JSON)
 		results = sparql.query().convert()
 		for result in results["results"]["bindings"]:
 			res_name = result["label"]["value"]
-			res_arr.add(re.split("[,\(]",res_name)[0])
+			res_arr.add(re.split("[,(]",res_name)[0])
 
 	except Exception as e:
 		print("ERRR in 1")
@@ -58,15 +58,18 @@ WHERE {
    ?city rdfs:label ?label.
    FILTER ( lang(?label) = 'ru'  and ?ccs IN (dbpedia-owl:""" + category +"""))
 }
-LIMIT 100
+LIMIT 500
 		""")
 		sparql.setReturnFormat(JSON)
 		results = sparql.query().convert()
 		for result in results["results"]["bindings"]:
 			res_name = result["label"]["value"]
-			res_arr.add(re.split("[,\(]",res_name)[0])
+			res_arr.add(re.split("[,\(]",res_name)[0].strip())
 
 	except Exception as e:
 		print("ERRR in 1")
 		print(e)
 	return res_arr
+
+def checkIfWorlRight(word):
+	return False
