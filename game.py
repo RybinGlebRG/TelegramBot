@@ -89,6 +89,13 @@ class Game:
     def registerQuestion(self,word):
         self.curComment=None
         if self.curAnswer is not None:
+            ##########################################################################################
+            # Описать эту функцию
+            ##########################################################################################
+            if not checkIfWordIn(word):
+                self.curComment="Неизвестное слово"
+                return False
+            ##########################################################################################
             if word[0].upper()!=self.curAnswer[-1].upper():
                 self.curComment="Некорректное слово"
                 return False
