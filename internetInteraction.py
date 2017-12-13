@@ -1,19 +1,17 @@
-import requests
-import json
 from SPARQLWrapper import SPARQLWrapper, JSON
 import re
 
 
 def getWords(n, category):
 	words = []
-	# if category == "Города":
-	# 	words = getCities()
-	# else:
-	# 	try:
-	# 		words = trytogetSome(category)
-	# 	except:
-	# 		pass
-	# words = list(words)
+	if category == "Города":
+		words = getCities()
+	else:
+		try:
+			words = trytogetSome(category)
+		except:
+			pass
+	words = list(words)
 	return words
 
 def getCities():
@@ -32,7 +30,7 @@ WHERE {
    FILTER ( lang(?label) = 'ru' and ?pop>10000 and ?ccs IN (dbpedia-owl:City, dbpedia-owl:Town))
 }
 Order by DESC(?pop)
-LIMIT 100
+LIMIT 200
 		""")
 		sparql.setReturnFormat(JSON)
 		results = sparql.query().convert()

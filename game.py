@@ -35,7 +35,9 @@ class Game:
         self.user_score=0
         self.ai_score=0
         self.db.deleteUsedWords(self.chat_id)
-        self.db.updateCategoryWordsBase(category)
+        num = self.db.getNumberOfCurrCatwords()
+        if num == 0:
+            self.db.updateCategoryWordsBase(category)
         self.db.showTabstrings()
         self.curQuestion=None
         self.curAnswer=None
