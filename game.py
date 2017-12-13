@@ -36,7 +36,8 @@ class Game:
         self.ai_score=0
         self.db.deleteUsedWords(self.chat_id)
         num = self.db.getNumberOfCurrCatwords(category)
-        if num == 0:
+        num = num[0][0]
+        if num < 300:
             self.db.updateCategoryWordsBase(category)
         self.db.showTabstrings()
         self.curQuestion=None

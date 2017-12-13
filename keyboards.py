@@ -15,7 +15,8 @@ kbMain = InlineKeyboardMarkup(inline_keyboard=[
 kbCategories = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Птицы', callback_data='category~Bird')],
 [InlineKeyboardButton(text='Животные', callback_data='category~Animal')],
-[InlineKeyboardButton(text='Города', callback_data='category~Города')]
+[InlineKeyboardButton(text='Города', callback_data='category~Города')],
+[InlineKeyboardButton(text='Фильмы', callback_data='category~Film')]
 ])
 
 
