@@ -73,13 +73,14 @@ class DBInteraction():
 	def getNumberOfCurrCatwords(self, category):
 		self.checkConnection()
 		with self.conn.cursor() as cursor:
-			s = "insert count(*) from word where category=" + category
-
+			s = "select count(*) from words where category='" + category +"';"
+			res = 0
 			try:
 				cursor.execute(s)
+
+				res = cursor.fetchall()
 			except Exception as e:
 				print(e)
-			res = cursor.fetchall()
 
 			return res
 

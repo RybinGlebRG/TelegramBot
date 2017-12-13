@@ -2,14 +2,20 @@ import random
 
 
 class Score:
-    alphabet = {'а': 0, 'б': 0, 'в': 0, 'г': 0, 'д': 0, 'е': 0, 'ё': 0, 'ж': 0, 'з': 0, 'и': 0, 'й': 0, 'к': 0, 'л': 0,
-                'м': 0, 'н': 0, 'о': 0, 'п': 0, 'р': 0, 'с': 0, 'т': 0, 'у': 0, 'ф': 0, 'х': 0, 'ц': 0, 'ч': 0, 'ш': 0, 'щ': 0,
-                'ъ': 0, 'ы': 0, 'ь': 0, 'э': 0, 'ю': 0, 'я': 0, '-': 0, ' ': 0}
+    def letter_dict(self):
+        answer = [chr(i) for i in range(ord('a'), ord('z') + 1)]  # latinic letters
+        answer.extend([chr(i) for i in range(ord('а'), ord('я') + 1)])  # cyrillic letter
+        answer.extend([str(i) for i in range(10)])  # numbers
+        answer.extend(['-', ' ', '(', ')', ])  # spec chars
+        return dict((i, 0) for i in answer)
+
+    alphabet = 0
+
     score_limit = 0
     moves_limit = 0
 
     def __init__(self, score_limit, moves_limit):
-        print(self.alphabet.__len__())
+        self.alphabet = self.letter_dict()
         self.createValues()
         self.score_limit = int(score_limit)
         self.moves_limit = int(moves_limit)

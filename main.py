@@ -2,7 +2,7 @@ import telepot.telepot as tp
 import ai
 import state
 import botAuthorization as ba
-from os import environ
+import os
 import time
 import requests as rq
 from telepot.telepot.loop import MessageLoop
@@ -12,8 +12,7 @@ from telepot.telepot.loop import OrderedWebhook
 
 
 if state.owner == 'liuba':
-    with open("liuba.txt") as f:
-        TOKEN = f.readline()
+    TOKEN = os.environ["TOKEN"]
 else:
     TOKEN = ba.getToken()
 
