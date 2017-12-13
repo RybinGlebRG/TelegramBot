@@ -2,6 +2,10 @@ from telepot.telepot.namedtuple import InlineKeyboardButton, InlineKeyboardMarku
 from telepot.telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, ForceReply
 import dbInteraction
 
+max_score1 = 1000
+max_score2 = 2000
+
+
 kbMain = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Быстрая игра', callback_data='main~Quick Game')],
     [InlineKeyboardButton(text='Своя игра', callback_data='main~Own Game')]
@@ -10,13 +14,15 @@ kbMain = InlineKeyboardMarkup(inline_keyboard=[
 
 kbCategories = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Цвета', callback_data='category~Colors')],
-[InlineKeyboardButton(text='Животные', callback_data='category~Colors')],
-[InlineKeyboardButton(text='Города', callback_data='category~Colors')]
+[InlineKeyboardButton(text='Животные', callback_data='category~Animal')],
+[InlineKeyboardButton(text='Города', callback_data='category~Города')]
 ])
 
+
+
 kbScores = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text='10', callback_data='scoreLimit~10')]
-    , [InlineKeyboardButton(text='20', callback_data='scoreLimit~20')]
+    [InlineKeyboardButton(text=max_score1, callback_data='scoreLimit~'+str(max_score1))]
+    , [InlineKeyboardButton(text=max_score2, callback_data='scoreLimit~'+str(max_score2))]
 ])
 
 kbMoves = InlineKeyboardMarkup(inline_keyboard=[
