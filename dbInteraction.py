@@ -119,8 +119,7 @@ class DBInteraction():
 		self.checkConnection()
 		with self.conn.cursor() as cursor:
 			for i in range(len(words)):
-				s = "insert into words(word,category) values('"
-				s += words[i] + "', '" + category + "');"
+				s = "insert into words(word,category) values('%s', '%s');" % (words[i], category)
 				try:
 					cursor.execute(s)
 				except Exception as e:
@@ -171,11 +170,11 @@ class DBInteraction():
 			res=cursor.fetchall()
 			return res
 
-	def checkIfWordIn(self, word):
+	def checkIfWordIn(self, word, category):
 		flag = False
 		self.checkConnection()
 		with self.conn.cursor() as cursor:
-			str = "select distinct lower(word) from words where lower(word) ='" + word.lower() + "';"
+			str = "select distinct lower(word) from words where lower(word) = '%s' and lower(category) = '%s';" % (word.lower(),category.lower())
 			try:
 				cursor.execute(str)
 				a = cursor.fetchall()
@@ -184,6 +183,12 @@ class DBInteraction():
 			except Exception as e:
 				print(e)
 		return flag
+
+	def forceDeleteAll(self):
+		self.checkConnection()
+		with self.conn.cursor() as cursor:
+			cursor.execute("Delete from words")
+			self.conn.commit()
 
 	def getPossibleAnswers(self,chat_id,word,category):
 		have = self.query(

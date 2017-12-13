@@ -96,8 +96,8 @@ class Chat:
         print('Callback Query:', query_id, from_id, query_data)
         if query_data[:query_data.find('~')] == 'main':
             if query_data[query_data.find('~') + 1:]=="Quick Game":
-                self.category="Города"
-                self.score_limit=2000
+                self.category="Star"
+                self.score_limit=500
                 self.moves_limit=15
                 self.bot.editMessageText(self.FSM.menu,
                                          text="Тема: " + self.category + ", очки: " + str(self.score_limit) + ", ходы: " + str(self.moves_limit) + "\n Подождите пожалуйста, пока я не выведу таблицу счета очков",

@@ -35,6 +35,7 @@ class Game:
 		self.moves=0
 		self.user_score=0
 		self.ai_score=0
+		# self.db.forceDeleteAll()
 		self.db.deleteUsedWords(self.chat_id)
 		num = self.db.getNumberOfCurrCatwords(category)
 		db_num = self.db.countAllBase()
@@ -64,10 +65,10 @@ class Game:
 		else:
 			return False
 
-	def checkIfWordIn(self,word):
-		if self.db.checkIfWordIn(word):
+	def checkIfWordIn(self,word, category):
+		if self.db.checkIfWordIn(word, category):
 			return True
-		elif internetInteraction.checkIfWorlRight(word):
+		elif internetInteraction.checkIfWorlRight(word, category):
 			return True
 		else:
 			return False
@@ -106,7 +107,7 @@ class Game:
 			##########################################################################################
 			# Описать эту функцию
 			##########################################################################################
-			if not self.checkIfWordIn(word):
+			if not self.checkIfWordIn(word, self.category):
 				self.curComment="Неизвестное слово"
 				return False
 			##########################################################################################

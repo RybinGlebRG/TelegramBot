@@ -71,5 +71,31 @@ LIMIT 500
 		print(e)
 	return res_arr
 
-def checkIfWorlRight(word):
+def checkIfWorlRight(word, category):
+	res_arr = set()
+	try:
+		sparql = SPARQLWrapper("http://dbpedia.org/sparql")
+		sparql.setQuery("""
+				PREFIX  dbpedia-owl:  <http://dbpedia.org/ontology/>
+SELECT ?label
+WHERE {
+   ?city rdf:type ?ccs.
+   ?city rdfs:label ?label.
+   FILTER ( ?ccs IN (dbpedia-owl:""" + category +  """) and str(?label) = \"""" + word +  """\" )
+}
+LIMIT 1
+			""")
+		sparql.setReturnFormat(JSON)
+		results = sparql.query().convert()
+		for result in results["results"]["bindings"]:
+			res_name = result["label"]["value"]
+		if res_name.lower() == word.lower():
+			return True
+
+	except Exception as e:
+		print("ERRR in 1")
+		print(e)
+
+
+
 	return False
