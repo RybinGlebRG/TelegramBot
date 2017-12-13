@@ -171,6 +171,20 @@ class DBInteraction():
 			res=cursor.fetchall()
 			return res
 
+	def checkIfWordIn(self, word):
+		flag = False
+		self.checkConnection()
+		with self.conn.cursor() as cursor:
+			str = "select distinct lower(word) from words where word ='" + word + "';"
+			try:
+				cursor.execute(str)
+				a = cursor.fetchall()
+				if (a[0][0]).Lower == word.Lower:
+					flag = True
+			except Exception as e:
+				print(e)
+		return flag
+
 	def getPossibleAnswers(self,chat_id,word,category):
 		have = self.query(
 			"select distinct upper(word) from words where upper(category)='"+category.upper()+"' and upper(word) not in (select upper(word) from used where chat_id='" + chat_id + "') and substr(upper(word),1,1)='" +

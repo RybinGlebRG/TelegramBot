@@ -100,7 +100,7 @@ class Chat:
                 self.score_limit=2000
                 self.moves_limit=15
                 self.bot.editMessageText(self.FSM.menu,
-                                         text="Тема: " + self.category + ", очки: " + str(self.score_limit) + ", ходы: " + str(self.moves_limit),
+                                         text="Тема: " + self.category + ", очки: " + str(self.score_limit) + ", ходы: " + str(self.moves_limit) + "\n Подождите пожалуйста, пока я не выведу таблицу счета очков",
                                          reply_markup=None)
                 self.FSM.handler("Быстря игра")
 

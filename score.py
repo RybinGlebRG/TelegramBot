@@ -7,7 +7,7 @@ class Score:
         answer.extend([chr(i) for i in range(ord('а'), ord('я') + 1)])  # cyrillic letter
         answer.extend([str(i) for i in range(10)])  # numbers
         answer.extend(['-', ' ', '(', ')', '—', ',', '.', ':',
-                       '"', "'", '_'])  # spec chars
+                       '"', "'", '_', 'ё', ''])  # spec chars
         return dict((i, 0) for i in answer)
 
     alphabet = 0
