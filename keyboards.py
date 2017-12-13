@@ -15,12 +15,13 @@ kbMain = InlineKeyboardMarkup(inline_keyboard=[
 kbCategories = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Птицы', callback_data='category~Bird')],
 [InlineKeyboardButton(text='Животные', callback_data='category~Animal')],
-[InlineKeyboardButton(text='Города', callback_data='category~Города')],
+[InlineKeyboardButton(text='Города', callback_data='category~City')],
 [InlineKeyboardButton(text='Книги', callback_data='category~Book')],
 [InlineKeyboardButton(text='Пьесы', callback_data='category~Play')],
 [InlineKeyboardButton(text='Еда', callback_data='category~Food')],
 [InlineKeyboardButton(text='Звезды', callback_data='category~Star')],
-[InlineKeyboardButton(text='Книги', callback_data='category~VideoGame')],
+[InlineKeyboardButton(text='Видеоигры', callback_data='category~VideoGame')],
+[InlineKeyboardButton(text='Лекарственные препараты', callback_data='category~Drug')],
 [InlineKeyboardButton(text='Фильмы', callback_data='category~Film')]
 ])
 
@@ -51,7 +52,8 @@ kbNG = ReplyKeyboardMarkup(keyboard=
     KeyboardButton(text='Начать новую игру'),
     KeyboardButton(text='Закончить текущую игру')
 ],
-[KeyboardButton(text='Текущий счет')]
+[KeyboardButton(text='Текущий счет')],
+[KeyboardButton(text='Авторы')]
 ], resize_keyboard=True)
 
 

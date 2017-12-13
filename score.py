@@ -30,3 +30,16 @@ class Score:
             return True
         else:
             return False
+
+    def getValuedAlphabet(self):
+        txt=""
+        i=0
+        for key, value in self.alphabet.items():
+            txt+=key+": "+str(value)
+            i+=1
+            if i<7:
+                txt+=" "*5
+            else:
+                txt+="\n"
+                i=0
+        return txt

@@ -36,39 +36,42 @@ class Chat:
                 self.bot.sendMessage(self.chat_id, 'Счет: Я: '+str(self.game.ai_score)+", Вы: "+str(self.game.user_score))
             else:
                 self.bot.sendMessage(self.chat_id, "Игра не начата")
+        elif word == "Авторы":
+            self.bot.sendMessage(self.chat_id, "Самые крутые разработчики, Люба и Глеб")
+            self.bot.sendMessage(self.chat_id, "Продолжим?")
         else:
             if self.game.isRunning:
-                try:
-                    if not self.game.registerQuestion(word):
-                        self.bot.sendMessage(self.chat_id, self.game.curComment)
-                    else:
-                        if not self.game.checkUser():
-                            self.bot.sendMessage(self.chat_id, "Вы выиграли")
-                            self.bot.sendMessage(self.chat_id,
-                                                 "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
-                                                     self.game.user_score))
-                            self.game.closeGame(0)
-                            return
+                #try:
+                if not self.game.registerQuestion(word):
+                    self.bot.sendMessage(self.chat_id, self.game.curComment)
+                else:
+                    if not self.game.checkUser():
+                        self.bot.sendMessage(self.chat_id, "Вы выиграли")
+                        self.bot.sendMessage(self.chat_id,
+                                             "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
+                                                 self.game.user_score))
+                        self.game.closeGame(0)
+                        return
 
-                        if not self.game.getAnswer():
-                            self.bot.sendMessage(self.chat_id, "Не могу найти слово.. Вы выиграли")
+                    if not self.game.getAnswer():
+                        self.bot.sendMessage(self.chat_id, "Не могу найти слово.. Вы выиграли")
+                        self.bot.sendMessage(self.chat_id,
+                                             "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
+                                                 self.game.user_score))
+                        self.game.closeGame(0)
+                        return
+                    else:
+                        answer = self.game.curAnswer
+                        self.bot.sendMessage(self.chat_id, answer.title())
+                        if not self.game.checkAI():
+                            self.bot.sendMessage(self.chat_id, "Вы проиграли")
                             self.bot.sendMessage(self.chat_id,
                                                  "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
                                                      self.game.user_score))
-                            self.game.closeGame(0)
+                            self.game.closeGame(1)
                             return
-                        else:
-                            answer = self.game.curAnswer
-                            self.bot.sendMessage(self.chat_id, answer.title())
-                            if not self.game.checkAI():
-                                self.bot.sendMessage(self.chat_id, "Вы проиграли")
-                                self.bot.sendMessage(self.chat_id,
-                                                     "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
-                                                         self.game.user_score))
-                                self.game.closeGame(1)
-                                return
-                except KeyError:
-                    self.bot.sendMessage(self.chat_id, "Встретился некорректный символ")
+                #except KeyError:
+                #    self.bot.sendMessage(self.chat_id, "Встретился некорректный символ")
 
             else:
                 self.bot.sendMessage(self.chat_id, "Игра не начата")
@@ -76,7 +79,9 @@ class Chat:
     def start(self,category,score_limit,moves_limit):
 
         self.game.startGame(category, score_limit, moves_limit)
-        self.bot.sendMessage(self.chat_id, "Стоимость букв:\n"+str(self.game.Score.alphabet).replace("'","").strip("{}"))
+        #self.bot.sendMessage(self.chat_id, "Стоимость букв:\n"+str(self.game.Score.alphabet).replace("'","").strip("{}"))
+        self.bot.sendMessage(self.chat_id,
+                             "Стоимость букв:\n" + self.game.Score.getValuedAlphabet())
         self.bot.sendMessage(self.chat_id, "Ваш ход")
 
     def idleChat(self):
@@ -96,8 +101,8 @@ class Chat:
         print('Callback Query:', query_id, from_id, query_data)
         if query_data[:query_data.find('~')] == 'main':
             if query_data[query_data.find('~') + 1:]=="Quick Game":
-                self.category="Города"
-                self.score_limit=2000
+                self.category="Star"
+                self.score_limit=500
                 self.moves_limit=15
                 self.bot.editMessageText(self.FSM.menu,
                                          text="Тема: " + self.category + ", очки: " + str(self.score_limit) + ", ходы: " + str(self.moves_limit) + "\n Подождите пожалуйста, пока я не выведу таблицу счета очков",
@@ -120,12 +125,18 @@ class Chat:
             self.start(self.category, self.score_limit, self.moves_limit)
         elif query_data[:query_data.find('~')]=="confirm":
             if query_data[query_data.find('~') + 1:]=="Yes":
+                self.bot.sendMessage(self.chat_id,
+                                     "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
+                                         self.game.user_score))
                 self.game.closeGame(0)
                 self.FSM.handler("yes")
             else:
                 self.FSM.handler("no")
         elif query_data[:query_data.find('~')]=="confirmNG":
             if query_data[query_data.find('~') + 1:]=="Yes":
+                self.bot.sendMessage(self.chat_id,
+                                     "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
+                                         self.game.user_score))
                 self.game.closeGame(0)
                 self.FSM.handler("yes")
 
