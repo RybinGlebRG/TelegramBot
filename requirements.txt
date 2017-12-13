@@ -2,3 +2,4 @@ psycopg2
 urllib3
 flask
 requests
+SPARQLWrapper
