@@ -8,10 +8,11 @@ def getWords(n, category):
 	words = []
 	# if category == "Города":
 	# 	words = getCities()
-	# try:
-	# 	words = trytogetSome(category)
-	# except:
-	# 	pass
+	# else:
+	# 	try:
+	# 		words = trytogetSome(category)
+	# 	except:
+	# 		pass
 	# words = list(words)
 	return words
 
