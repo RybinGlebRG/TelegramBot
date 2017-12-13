@@ -68,6 +68,31 @@ class DBInteraction():
 		self.checkConnection()
 		with self.conn.cursor() as cursor:
 			cursor.execute("delete from used where chat_id='"+chat_id+"'")
+		self.conn.commit()
+
+	def countAllBase(self):
+		coun = 0
+		self.checkConnection()
+		with self.conn.cursor() as cursor:
+			s = "select count(*) from words;"
+			try:
+				cursor.execute(s)
+
+				coun = cursor.fetchall()
+			except Exception as e:
+				print(e)
+		if coun != 0:
+			coun = coun[0][0]
+		return coun
+
+	def deleteLargestCat(self):
+		self.checkConnection()
+		with self.conn.cursor() as cursor:
+			s = "delete from words WHERE category in (select category from (select count(*) as c, category from words group by category order by c desc limit 1) as t1)"
+			try:
+				cursor.execute(s)
+			except Exception as e:
+				print(e)
 			self.conn.commit()
 
 	def getNumberOfCurrCatwords(self, category):
@@ -81,8 +106,9 @@ class DBInteraction():
 				res = cursor.fetchall()
 			except Exception as e:
 				print(e)
-
-			return res
+		if res != 0:
+			res = res[0][0]
+		return res
 
 
 
