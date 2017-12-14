@@ -99,8 +99,10 @@ class Chat:
     def on_callback_query(self, msg):
         query_id, from_id, query_data = tp.glance(msg, flavor='callback_query')
         print('Callback Query:', query_id, from_id, query_data)
-        if query_data[:query_data.find('~')] == 'main':
-            if query_data[query_data.find('~') + 1:]=="Quick Game":
+        #if query_data[:query_data.find('~')] == 'main':
+        if self.getKey(query_data) == 'main':
+            #if query_data[query_data.find('~') + 1:]=="Quick Game":
+            if self.getValue(query_data) == "Quick Game":
                 self.category="Star"
                 self.score_limit=500
                 self.moves_limit=15
@@ -110,37 +112,36 @@ class Chat:
                 self.FSM.handler("Быстря игра")
 
                 self.start(self.category, self.score_limit, self.moves_limit)
-            elif query_data[query_data.find('~') + 1:] == 'Own Game':
+            elif self.getValue(query_data) == 'Own Game':
                 self.FSM.handler("Своя игра")
-        elif query_data[:query_data.find('~')] == 'category':
-            self.category = query_data[query_data.find('~') + 1:]
+        elif self.getKey(query_data) == 'category':
+            self.category = self.getValue(query_data)
             self.FSM.handler("Категория")
-        elif query_data[:query_data.find('~')] == 'scoreLimit':
-            self.score_limit = query_data[query_data.find('~') + 1:]
+        elif self.getKey(query_data) == 'scoreLimit':
+            self.score_limit = self.getValue(query_data)
             self.FSM.handler("Очки")
-        elif query_data[:query_data.find('~')] == 'movesLimit':
-            self.moves_limit = query_data[query_data.find('~') + 1:]
+        elif self.getKey(query_data) == 'movesLimit':
+            self.moves_limit = self.getValue(query_data)
             self.bot.editMessageText(self.FSM.menu, text="Тема: "+self.category+", очки: "+str(self.score_limit)+", ходы: "+str(self.moves_limit) + "\n Пожалуйста, подождите хочу посчитать сколько очков будет за каждую букву.", reply_markup=None)
             self.FSM.handler("Ходы")
             self.start(self.category, self.score_limit, self.moves_limit)
-        elif query_data[:query_data.find('~')]=="confirm":
-            if query_data[query_data.find('~') + 1:]=="Yes":
-                self.bot.sendMessage(self.chat_id,
-                                     "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
-                                         self.game.user_score))
-                self.game.closeGame(0)
+        elif self.getKey(query_data)=="confirm":
+            if self.getValue(query_data)=="Yes":
                 self.FSM.handler("yes")
             else:
                 self.FSM.handler("no")
-        elif query_data[:query_data.find('~')]=="confirmNG":
-            if query_data[query_data.find('~') + 1:]=="Yes":
-                self.bot.sendMessage(self.chat_id,
-                                     "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
-                                         self.game.user_score))
-                self.game.closeGame(0)
+        elif self.getKey(query_data)=="confirmNG":
+            if self.getValue(query_data)=="Yes":
+
                 self.FSM.handler("yes")
 
             else:
                 self.FSM.handler("no")
 
+    def getKey(self,query_data):
+        key=query_data[:query_data.find('~')]
+        return key
 
+    def getValue(self,query_data):
+        value=query_data[query_data.find('~') + 1:]
+        return value
