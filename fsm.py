@@ -50,33 +50,41 @@ class FSM:
         self.bot.editMessageText(self.menu, text="Выберите количество ходов", reply_markup=kb.kbMoves)
 
 
-    def handler(self,str):
-        if str=="/start":
+    def handler(self, txt):
+        if txt== "/start":
             if self.state is None:
                 self.sendMessage(self.chat_id, 'Сыграем?', reply_markup=kb.kbNG)
                 self.stateMain()
 
-        elif str=="Начать новую игру":
+        elif txt== "Начать новую игру":
             if self.game.isRunning:
                 self.stateConfirmClose()
             else:
                 self.stateGameType()
 
-        elif str == "Закончить текущую игру":
+        elif txt == "Закончить текущую игру":
             if self.game.isRunning:
                 self.stateConfirmClose()
             else:
                 self.bot.sendMessage(self.chat_id, "Игра не начата")
 
-        elif  str=="yes":
+        elif  txt== "yes":
             if self.state=="confirm_close":
                 self.bot.editMessageText(self.menu, "Игра завершена", reply_markup=None)
+                self.bot.sendMessage(self.chat_id,
+                                     "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
+                                         self.game.user_score))
+                self.game.closeGame(1)
                 self.stateMain()
             if self.state == "confirm_ng":
+                self.bot.sendMessage(self.chat_id,
+                                     "Счет: Я: " + str(self.game.ai_score) + ", Вы: " + str(
+                                         self.game.user_score))
+                self.game.closeGame(1)
                 self.stateGameType()
 
 
-        elif str=="no":
+        elif txt== "no":
             if self.state=="confirm_close":
                 self.bot.editMessageText(self.menu, "Тогда продолжаем", reply_markup=None)
                 self.stateMain()
@@ -84,17 +92,17 @@ class FSM:
                 self.bot.editMessageText(self.menu, "Тогда продолжаем", reply_markup=None)
                 self.stateMain()
 
-        elif str=="Быстря игра":
+        elif txt== "Быстря игра":
             self.stateMain()
 
-        elif str=="Своя игра":
+        elif txt== "Своя игра":
             self.stateCategory()
 
-        elif str=="Категория":
+        elif txt== "Категория":
             self.stateScoreLimits()
 
-        elif str=="Очки":
+        elif txt== "Очки":
             self.stateMovesLimits()
 
-        elif str=="Ходы":
+        elif txt== "Ходы":
             self.stateMain()
