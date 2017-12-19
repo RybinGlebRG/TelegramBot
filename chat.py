@@ -41,7 +41,6 @@ class Chat:
             self.bot.sendMessage(self.chat_id, "Продолжим?")
         else:
             if self.game.isRunning:
-                #try:
                 if not self.game.registerQuestion(word):
                     self.bot.sendMessage(self.chat_id, self.game.curComment)
                 else:
@@ -70,8 +69,6 @@ class Chat:
                                                      self.game.user_score))
                             self.game.closeGame(1)
                             return
-                #except KeyError:
-                #    self.bot.sendMessage(self.chat_id, "Встретился некорректный символ")
 
             else:
                 self.bot.sendMessage(self.chat_id, "Игра не начата")
@@ -79,7 +76,6 @@ class Chat:
     def start(self,category,score_limit,moves_limit):
 
         self.game.startGame(category, score_limit, moves_limit)
-        #self.bot.sendMessage(self.chat_id, "Стоимость букв:\n"+str(self.game.Score.alphabet).replace("'","").strip("{}"))
         self.bot.sendMessage(self.chat_id,
                              "Стоимость букв:\n" + self.game.Score.getValuedAlphabet())
         self.bot.sendMessage(self.chat_id, "Ваш ход")
@@ -99,9 +95,7 @@ class Chat:
     def on_callback_query(self, msg):
         query_id, from_id, query_data = tp.glance(msg, flavor='callback_query')
         print('Callback Query:', query_id, from_id, query_data)
-        #if query_data[:query_data.find('~')] == 'main':
         if self.getKey(query_data) == 'main':
-            #if query_data[query_data.find('~') + 1:]=="Quick Game":
             if self.getValue(query_data) == "Quick Game":
                 self.category="Star"
                 self.score_limit=500

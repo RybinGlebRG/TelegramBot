@@ -9,7 +9,11 @@ from telepot.telepot.loop import MessageLoop
 import os
 from flask import Flask, request
 from telepot.telepot.loop import OrderedWebhook
+import ui
+import threading as th
 
+shared={"chat":None}
+lock=th.Lock()
 
 if state.owner == 'liuba':
     TOKEN = os.environ["TOKEN"]
@@ -20,6 +24,7 @@ bot = tp.Bot(TOKEN)
 AI = ai.AI(bot)
 app = Flask(__name__)
 webhook = OrderedWebhook(bot, {'chat': AI.analyzer.handle, 'callback_query': AI.analyzer.on_callback_query})
+UI=ui.UI(shared,lock)
 
 @app.route('/bot' + TOKEN, methods=['GET', 'POST'])
 def pass_update():
@@ -39,10 +44,5 @@ if not state.local:
     app.run(host='0.0.0.0', port=int(PORT))
 
 else:
+    UI.main()
 
-    response = rq.get("https://api.telegram.org/bot" + TOKEN + "/setWebhook")
-    print(response.content)
-    MessageLoop(bot, {'chat': AI.analyzer.handle, 'callback_query': AI.analyzer.on_callback_query}).run_as_thread()
-    print('Listening ...')
-    while (1):
-        time.sleep(10)

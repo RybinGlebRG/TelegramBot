@@ -42,6 +42,7 @@ class DBInteraction():
             cur_env = state.liubas_db
         else:
             cur_env = "postgres://postgres:postgres@127.0.0.1:5432/WRDS"
+            cur_env = os.environ['DATABASE_URL']
         return cur_env
 
     def checkConnection(self):
