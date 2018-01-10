@@ -7,18 +7,16 @@ import inputAnalyzer as ia
 import chat
 
 class AI():
-    bot=None
     db = None
     evo=gm.Evolution()
     analyzer = None
     chats=[]
 
-    def __init__(self,bot):
-
-        self.bot=bot
+    def __init__(self):
         self.db = dbInteraction.DBInteraction()
         self.db.deleteAllUsedWords()
         self.analyzer = ia.InputAnalyzer(self.answer,self.chats)
+
 
     def findOrCreateChat(self,chat_id):
         cur_chat=None
@@ -26,6 +24,7 @@ class AI():
         if cur_chat is None:
             cur_chat=self.createChat(chat_id)
         return cur_chat
+
 
     def findChat(self,chat_id):
         cur_chat = None
@@ -35,7 +34,7 @@ class AI():
         return cur_chat
 
     def createChat(self,chat_id):
-        self.chats.append(chat.Chat(int(chat_id),self.bot,self.db,self.evo))
+        self.chats.append(chat.Chat(int(chat_id),self.db,self.evo))
         cur_chat = self.findChat(chat_id)
         return cur_chat
 
@@ -46,6 +45,7 @@ class AI():
     def answer(self, str,chat_id):
         cur_chat=self.findOrCreateChat(chat_id)
         cur_chat.analyzeNew(str)
+        return cur_chat.answers
 
     def __exit__(self, exception_type, exception_value, traceback):
         pass

@@ -12,46 +12,40 @@ from telepot.telepot.loop import MessageLoop
 import os
 from flask import Flask, request
 from telepot.telepot.loop import OrderedWebhook
+import transmitter
+import receiver
+import threading as th
+import fsm
 
 
 
-class UI:
+class UI(th.Thread):
     TOKEN=None
     bot=None
     webhook=None
-    shared=None
+    buffer=None
     lock=None
+    fsm=None
 
     def __init__(self,shared,lock):
         self.TOKEN = ba.getToken()
         self.bot=tp.Bot(self.TOKEN)
-        #self.webhook = OrderedWebhook(self.bot, {'chat': self.chatEvent, 'callback_query': self.callbackEvent})
-        self.shared=shared
+        self.buffer=shared
         self.lock=lock
+        self.fsm=fsm.FSM()
+        th.Thread.__init__(self)
 
-
-
-    def chatEvent(self,msg):
-        content_type, chat_type, chat_id = tp.glance(msg)
-        print('Chat_id:', chat_id)
-        if content_type == 'text':
-            while True:
-                if self.shared.get("chat") is None or self.shared["chat"].get("id") is None or self.shared["chat"].get("text") is None:
-                    with self.lock:
-                        if self.shared.get("chat") is None or self.shared["chat"].get("id") is None or self.shared["chat"].get("text") is None:
-                            self.shared["chat"]["id"]=chat_id
-                            self.shared["chat"]["text"]=msg['text']
-                            break
-
-    def callbackEvent(self):
-        #TODO Implement this
-        pass
+    def run(self):
+        while True:
+            self.main()
 
     def main(self):
-        response = rq.get("https://api.telegram.org/bot" + self.TOKEN + "/setWebhook")
-        print(response.content)
-        MessageLoop(self.bot,
-                    {'chat': self.chatEvent, 'callback_query': self.callbackEvent}).run_as_thread()
-        print('Listening ...')
-        while (1):
-            time.sleep(10)
+        t1=receiver.Receiver(self.buffer,self.lock,self.TOKEN,self.bot)
+        t2=transmitter.Transmitter(self.buffer,self.lock,self.bot)
+
+        t1.start()
+        t2.start()
+
+        t1.join()
+        t2.join()
+
