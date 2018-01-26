@@ -1,7 +1,6 @@
 import telepot.telepot as tp
 from telepot.telepot.loop import OrderedWebhook
 import botAuthorization as ba
-import threading as th
 import time
 import ai
 import state
@@ -13,6 +12,7 @@ import os
 from flask import Flask, request
 from telepot.telepot.loop import OrderedWebhook
 import threading as th
+import message as m
 
 class Receiver(th.Thread):
     TOKEN=None
@@ -22,7 +22,7 @@ class Receiver(th.Thread):
     bot=None
     fsm=None
 
-    def __init__(self,buffer,lock,TOKEN,bot,fsm):
+    def __init__(self,buffer,TOKEN,bot,lock=None,fsm=None):
         self.buffer=buffer
         self.lock=lock
         self.TOKEN=TOKEN
@@ -39,11 +39,14 @@ class Receiver(th.Thread):
         content_type, chat_type, chat_id = tp.glance(msg)
         print('Chat_id:', chat_id)
         if content_type == 'text':
-            with self.lock:
-                self.buffer.receiveMessage(chat_id, msg['text'])
+            self.buffer.enqueueMessage(m.Message(chat_id,msg['text'],type="read"))
 
-    def callbackEvent(self):
+
+    def callbackEvent(self,msg):
         #TODO Implement this
+        query_id, from_id, query_data = tp.glance(msg, flavor='callback_query')
+        print('Callback Query:', query_id, from_id, query_data)
+        self.buffer.enqueueMessage(m.Message(from_id, query_data, type="read",subtype="callback"))
         pass
 
     def main(self):

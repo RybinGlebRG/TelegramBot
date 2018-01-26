@@ -42,10 +42,10 @@ class AI():
         cur_chat=self.findChat(chat_id)
         cur_chat.start(limits[0],limits[1],limits[2])
 
-    def answer(self, str,chat_id):
-        cur_chat=self.findOrCreateChat(chat_id)
-        cur_chat.analyzeNew(str)
-        return cur_chat.answers
+    def answer(self, message):
+        cur_chat=self.findOrCreateChat(message.chat_id)
+        cur_chat.differentiate(message)
+        return cur_chat.messages
 
     def __exit__(self, exception_type, exception_value, traceback):
         pass

@@ -4,11 +4,11 @@ import buffer
 import logic
 
 
-shared=buffer.Buffer()
+buffer=buffer.Buffer()
 lock=th.Lock()
 
-t1=ui.UI(shared,lock)
-t2=logic.Logic(shared,lock)
+t1=ui.UI(buffer, lock)
+t2=logic.Logic(buffer, lock)
 
 t1.start()
 t2.start()

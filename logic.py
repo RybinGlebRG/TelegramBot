@@ -1,5 +1,6 @@
 import ai
 import threading as th
+import message as m
 
 class Logic(th.Thread):
     AI=None
@@ -18,10 +19,13 @@ class Logic(th.Thread):
 
     def main(self):
         while True:
-            with self.lock:
-                if not self.buffer.isReceiveEmpty():
-                    message=self.buffer.readMessage()
-                    answers=self.AI.answer(message["text"],message["chat_id"])
-                    # TODO Изменить на список словарей: ответ, тип
-                    self.buffer.alterChat(message["chat_id"],answers)
+            message=None
+            messages = []
+            while message is None:
+                message=self.buffer.getReadMessage()
+            messages = self.AI.answer(m.Message(message.chat_id,message.text,message.type,message.subtype))
+            # TODO Do not differentiate types (Does it need?)
+            while len(messages)>0:
+                self.buffer.enqueueMessage(messages.pop())
+            message=None
 

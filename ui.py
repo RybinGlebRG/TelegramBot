@@ -1,7 +1,6 @@
 import telepot.telepot as tp
 from telepot.telepot.loop import OrderedWebhook
 import botAuthorization as ba
-import threading as th
 import time
 import ai
 import state
@@ -32,7 +31,7 @@ class UI(th.Thread):
         self.bot=tp.Bot(self.TOKEN)
         self.buffer=shared
         self.lock=lock
-        self.fsm=fsm.FSM()
+        #self.fsm=fsm.FSM()
         th.Thread.__init__(self)
 
     def run(self):
@@ -40,8 +39,8 @@ class UI(th.Thread):
             self.main()
 
     def main(self):
-        t1=receiver.Receiver(self.buffer,self.lock,self.TOKEN,self.bot)
-        t2=transmitter.Transmitter(self.buffer,self.lock,self.bot)
+        t1=receiver.Receiver(self.buffer,self.TOKEN,self.bot)
+        t2=transmitter.Transmitter(self.buffer,self.bot)
 
         t1.start()
         t2.start()
